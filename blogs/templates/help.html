@@ -1,0 +1,49 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<section class="help">
+    {% with 'contributing' as anchor %}
+    {% url 'help' as the_url %}
+    <h4 id="{{anchor}}">Adding something to the site</h4><a href="{{ the_url }}/#{{anchor}}">🔗</a>
+    <p>If you want to add a blog, event, group, or newsletter, head to <a href="/contribute">Contribute</a>.</p>
+    {% endwith %}
+
+    {% with 'updating' as anchor %}
+    {% url 'help' as the_url %}
+    <h4 id="{{anchor}}">Updating or removing a listing</h4><a href="{{ the_url }}/#{{anchor}}">🔗</a>
+    <p>Made a mistake or have more information to add? Blog got hacked? Changed careers? Just fill in the <a href="/contact">contact form</a>.</p>
+    {% endwith %}
+
+    {% with 'opting-out' as anchor %}
+    {% url 'help' as the_url %}
+    <h4 id="{{anchor}}">Opting out for a blog post</h4><a href="{{ the_url }}/#{{anchor}}">🔗</a>
+    <p>If you have registered your blog but want to opt-out of being indexed and announced for an individual post, you can add any of the following as tags using your blog publishing software, and your post will be ignored.</p>
+    <ul>
+        <li>notglam</li>
+        <li>notglamr</li>
+        <li>notausglamr</li>
+        <li>notausglamblogs</li>
+    </ul>
+    {% endwith %}
+
+    {% with 'aus-glam-blogs' as anchor %}
+    {% url 'help' as the_url %}
+    <h4 id="{{anchor}}">What happened to Aus GLAM Blogs?</h4><a href="{{ the_url }}/#{{anchor}}">🔗</a>
+    <p><em>Aus GLAM Blogs</em> was focussed on blogs specifically. <em>Aus GLAMR</em> is the successor, now including more GLAMR content. All the blog articles from the original site have been migrated and will be inluded in your search results.</p>
+    {% endwith %}
+
+    {% with 'pocket' as anchor %}
+    {% url 'help' as the_url %}
+    <h4 id="{{anchor}}">What happened to the Pocket integration?</h4><a href="{{ the_url }}/#{{anchor}}">🔗</a>
+    <p>The integration with Pocket from Aus GLAM Blogs is no longer available. Please consider using the RSS feed or email subscription instead.</p>
+    {% endwith %}
+
+    {% with 'activitypub' as anchor %}
+    {% url 'help' as the_url %}
+    <h4 id="{{anchor}}">Activitypub account name!!???</h4><a href="{{ the_url }}/#{{anchor}}">🔗</a>
+    <p>ActivityPub is the protocol used by Mastodon, BlueSky, BookWyrm, Threads, and other "fediverse" social media. If you include an account name, it will be mentioned when your registered thing is announced by the AusGLAMR Mastodon bot. If you'd like to join the "fediverse", try <a href="https://ausglam.space">Aus GLAM Space</a>.</p>
+    {% endwith %}
+</section>
+
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+{% if register_type == "message" %}
+    <p>Thanks for getting in touch!</p>
+{% else %}
+    <p>Thankyou for registering your {{ register_type }}.</p>
+
+    {% if register_type == "email address" %}
+    <p>Check your inbox to confirm your subscription. You can opt-out at any time by clicking the link at the bottom of the weekly emails.</p>
+    {% else %}
+    <p>Your {{ register_type }} registration will be reviewed before being added to <em>Aus GLAMR</em>.</p>
+    {% endif %}
+{% endif %}
+{% endblock %}

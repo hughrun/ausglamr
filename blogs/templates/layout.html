@@ -1,0 +1,65 @@
+{% load static %}
+{% load glamr_tags %}
+
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="{% static 'css/normalize.css' %}" type="text/css" />
+    <link rel="stylesheet" href="{% static 'css/skeleton.css' %}" type="text/css"  />
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}" type="text/css"  />
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="/"><h1>Aus GLAMR</h1></a>
+            <a href="{% url 'blogs' %}"><span class="menu-item">Blogs</span>></a>
+            <a href="/events"><span class="menu-item">Events</span>></a>
+            <a href="{% url 'groups' %}"><span class="menu-item">Groups</span>></a>
+            <a href="{% url 'newsletters' %}"><span class="menu-item">Newsletters</span>></a>
+        </div>
+        <div class="core-menu">
+            <div class="container">
+                <a href="{% url 'contribute' %}"><span class="menu-item">Contribute</span></a>
+                <a href="{% url 'subscribe' %}"><span class="menu-item">Subscribe</span>></a>
+                <a href="{% url 'search' %}"><span class="menu-item">Search</span></a>
+                <a href="{% url 'help' %}"><span class="menu-item">Help</span>></a>
+                <a href="{% url 'contact' %}"><span class="menu-item">Contact</span>></a>
+            </div>
+        </div>
+    </header>
+    <section class="container">
+        {% site_messages %}
+    </section>
+    {% block container %}
+    <main class="container">
+        {% block intro %}{% endblock %}
+        {% block title %}
+        <h2 class="page-title">{{ title }}</h2>
+        {% endblock %}
+        <section>
+            {% block content %}{% endblock %}
+        </section>
+    {% endblock %}
+
+    </main>
+    <footer>
+        <section class="row">
+            <section class="one-half column left">
+                <div class="container">
+                    <p>Love GLAMR data? You might also like the <a href="https://librarymap.hugh.run">Australian Library Map</a></p>
+                </div>
+            </section>
+            <section class="one-half column">
+                <div class="container">
+                    <p>Made & maintained by <a href="https://www.hughrundle.net">Hugh Rundle</a> and hosted by <a href="https://newcardigan.org">newCardigan</a></p>
+                    <p>Built with <a href="https://djangoproject.com">Django</a> and 💖</p>
+                </div>
+            </section>
+        </section>
+    </footer>
+    <script src="/static/js/glamr.js"></script>
+</body>
+</html>

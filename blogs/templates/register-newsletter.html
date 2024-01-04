@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div class="loader" hidden>
+    <div class="lds-heart"><div></div></div>
+    <div class="lds-text">Processing...</div>
+</div>
+<form action="{% url 'register-newsletter' %}" method="post">
+    {% csrf_token %}
+    <div class="row">
+        <div class="columns eight">
+            {{ form }}
+            <input class="button-primary u-pull-right" type="submit" value="Register!">
+        </div>
+    </div>
+</form>
+
+{% endblock %}

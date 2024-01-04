@@ -1,0 +1,63 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    {% if items %}
+        {% for item in items %}
+        <div class="card">
+            <div class="card-title">
+                <a href="{{ item.url }}"><h3>{% if item.title %} {{ item.title }} {% else %} {{item.name}} {% endif %}</h3></a>
+                <p class="meta">
+                    {% if item.author_name or item.author %}
+                    <span class="author_name">{% if item.author_name%} {{ item.author_name }} {% else %} {{ item.author_name }} {% endif %}</span> |
+                    {% endif %}
+                    {% if item.blog %}
+                    <span class="blog_title">{{ item.blog.title }}</span>
+                    {% elif item.description %}
+                    <p class="">{{ item.description }}</p>
+                    {% elif item.details %}
+                    <p class="">{{ item.details }}</p>
+                    {% endif %}
+                </p>
+                {% if item.tags %}
+                {% for tag in item.tags.all %}
+                <a href="{% url 'browse' %}?q={{ tag.name|urlencode }}"><span class="badge">{{ tag.name }}</span></a>
+                {% endfor %}
+                {% elif item.category_name %}
+                <span class="badge badge_{{item.category}}">{{item.category_name}}</span>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+
+        <section class=" pagination row">
+            <span class="four columns">
+                {% if items.has_previous %}
+                    <a href="?q={{ query }}&page=1">&laquo; first</a> |
+                    <a href="?q={{ query }}&page={{ items.previous_page_number }}">previous</a>
+                {% else %}
+                    <span class="inactive">&laquo; first | previous</span>
+                {% endif %}
+            </span>
+            <span class="current four columns">
+                Page {{ items.number }} of {{ items.paginator.num_pages }}
+            </span>
+            <span class="current four columns">
+                {% if items.has_next %}
+                    <a href="?q={{ query }}&page={{ items.next_page_number }}">next</a> |
+                    <a href="?q={{ query }}&page={{ items.paginator.num_pages }}">last &raquo;</a>
+                {% else %}
+                    <span class="inactive">next | last &raquo;</span>
+                {% endif %}
+            </span>
+        </section>
+    {% elif query %}
+    <p><em>No items found for "{{ query }}"</em></p>
+    {% endif %}
+
+    <section class="trending">
+        <h4>Top tags</h4>
+        {% for tag in trending %}
+        <a href="{% url 'browse' %}?q={{ tag.name|urlencode }}"><span class="badge">{{ tag.name }}</span></a>
+        {% endfor %}
+    </section>
+{% endblock %}

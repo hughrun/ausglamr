@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="loader" hidden>
+    <div class="lds-heart"><div></div></div>
+    <div class="lds-text">Sending...</div>
+</div>
+<form action="{% url 'contact' %}" method="post">
+    {% csrf_token %}
+
+    <div class="row">
+        <div class="columns eight">
+            <label for="{{ form.from_email.id_for_label }}">Your email address:</label>
+            {% if errors %}  {{ form.from_email.errors }} {% endif %}
+            {{form.from_email}}
+            <label for="{{ form.subject.id_for_label }}">Subject:</label>
+            {% if errors %}  {{ form.subject.errors }} {% endif %}
+            {{form.subject}}
+            {% if errors %}  {{ form.message.errors }} {% endif %}
+            <label for="{{ form.message.id_for_label }}">Message:</label>
+            <textarea name="message" id="message" class="u-full-width"></textarea>
+            <input class="button-primary u-pull-right" type="submit" value="Register!">
+        </div>
+    </div>
+</form>
+{% endblock %}
+

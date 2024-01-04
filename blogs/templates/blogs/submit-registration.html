@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<form action="{% url 'submit-blog-registration' %}" method="post">
+    {% csrf_token %}
+
+    <div class="row">
+        <div class="columns eight">
+            {{ form }}
+            <input class="button-primary u-pull-right" type="submit" value="Register!">
+        </div>
+    </div>
+</form>
+
+{% endblock %}

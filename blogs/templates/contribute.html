@@ -1,0 +1,54 @@
+{% extends "layout.html" %}
+
+<main class="container pop-boxes">
+    {% block intro %}{% endblock %}
+    {% block title %}
+    <h2 class="page-title">{{ title }}</h2>
+    {% endblock %}
+    <section>
+        {% block content %}
+
+
+
+        <section>
+            <p>You can contribute to <em>Aus GLAMR</em> by registering a blog, newsletter, event, or discussion group. Creators or content should be Australasian-based.</p>
+        </section>
+
+        <section class="contribute">
+
+            <section class="pop">
+                <h2>Register a blog</h2>
+                <p>We have a capacious definition of "blog". If it's a website that often or sometimes has Strong GLAMR Themes, with an RSS or Atom feed, you can register it here.</p>
+                <a class="button" href="{% url 'register-blog' %}">Register blog</a>
+            </section>
+
+            <section class="pop">
+                <h2>Register a group</h2>
+                <p>A "group" could be an email list, a subreddit, Mastodon server, etc. If it's a many-to-many electronic medium, it's probably a discussion group.</p>
+                <a class="button" href="{% url 'register-group' %}">Register group</a>
+            </section>
+
+            <section class="pop">
+                <h2>Register an event</h2>
+                <p>Conference, convention, seminar, workshop, talk, meet-up...
+            </br>Whatever you call it, you know what we mean.</p>
+                <a class="button" href="{% url 'register-event' %}">Register event</a>
+            </section>
+
+            <section class="pop">
+                <h2>Register a newsletter</h2>
+                <p>Whether it uses Ghost, Write.as, Mailchimp or something else, if it's an email newsletter with some kind of GLAMR focus you can register it here.</p>
+                <a class="button" href="{% url 'register-newsletter' %}">Register newsletter</a>
+            </section>
+
+
+
+            <section class="pop">
+                <h2>Register or update a Call for Papers</h2>
+                <p>When you register your event you can also register a "call for papers", "call for proposals" or whatever it's called for your event. Forgot? Extended or re-opened the call? Use this form.</p>
+                <a class="button" href="{% url 'register-cfp' %}">Register CFP</a>
+            </section>
+
+        </section>
+        {% endblock %}
+</section>

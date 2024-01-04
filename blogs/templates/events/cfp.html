@@ -1,0 +1,66 @@
+{% extends "layout.html" %}
+
+{% block intro %}
+{% if conf_name %}
+<div class="alert success">
+    {{ conf_name }} has been registered!
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block title %}
+{% if conf_name %}
+<h2>Register a Call for Papers for {{ conf_name }}</h2>
+{% else %}
+<h2>Register a Call for Papers</h2>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+
+<div class="loader" hidden>
+    <div class="lds-heart"><div></div></div>
+    <div class="lds-text">Processing...</div>
+</div>
+<form action="{% url 'register-cfp' %}" method="post">
+    {% csrf_token %}
+    <div class="row">
+        <div class="columns eight">
+            {% if conf_name %}
+            <input hidden type="text" name="event" value="{{ form.event.value }}">
+            {% else %}
+            <label for="{{ form.event.id_for_label }}">Event:</label>
+            {% if errors %} {{ form.event.errors }} {% endif %}
+            {{ form.event }}
+            {% endif %}
+
+            <label for="{{ form.name.id_for_label }}">Name:</label>
+            {% if errors %} {{ form.name.errors }} {% endif %}
+            <p class="hint">e.g. "Call for Papers", "Request for submissions" etc</p>
+            <input type="text" name="name" id="name" class="u-full-width" required="">
+            {% if errors %}  {{ form.details.errors }} {% endif %}
+            <label for="{{ form.details.id_for_label }}">Details:</label>
+            <textarea name="details" id="details" class="u-full-width"></textarea>
+
+            <div class="row">
+                <span class="columns four">
+                    {% if errors %}  {{ form.opening_date.errors }} {% endif %}
+                    <label for="{{ form.opening_date.id_for_label }}">opening_date:</label>
+                    {% if errors %}  {{ form.opening_date.errors }} {% endif %}
+                    {{ form.opening_date }}
+                </span>
+                <span class="columns four">
+                    <label for="{{ form.closing_date.id_for_label }}">closing_date:</label>
+                    {% if errors %}  {{ form.closing_date.errors }} {% endif %}
+                    {{ form.closing_date }}
+                </span>
+            </div>
+
+            <input class="button-primary u-pull-right" type="submit" value="Register!">
+            <a href="/"><button class="button u-pull-right button-first" type="button">No thanks</button></a>
+        </div>
+    </div>
+</form>
+
+{% endblock %}

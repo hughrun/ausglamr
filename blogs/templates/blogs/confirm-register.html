@@ -1,0 +1,54 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div class="loader" hidden>
+    <div class="lds-heart"><div></div></div>
+    <div class="lds-text">Processing...</div>
+</div>
+{% if error %}
+<div class="alert failure">
+    {{ error }}
+</div>
+{% endif %}
+<form action="{% url 'submit-blog-registration' %}" method="post">
+    {% csrf_token %}
+
+    <div class="row">
+        <div class="columns eight">
+
+            <input hidden type="text" name="register_type" value="blog">
+            <label for="{{ form.title.id_for_label }}">Title:</label>
+            <input type="text" name="title" id="title" value="{{ blog_info.title }}" class="u-full-width" required="">
+
+            <label for="{{ form.author_name.id_for_label }}">Author:</label>
+            <input type="text" name="author_name" id="author_name" value="{{ blog_info.author_name }}" class="u-full-width" required="">
+
+            <label for="{{ form.description.id_for_label }}">Description:</label>
+            <textarea name="description" id="description" class="u-full-width">{{ blog_info.description }}</textarea>
+
+            {{ form.url.errors }}
+            <label for="{{ form.url.id_for_label }}">URL:</label>
+            {{ form.url }}
+
+            <label for="{{ form.feed.id_for_label }}">Feed:</label>
+            <input type="text" name="feed" id="feed" value="{{ blog_info.feed }}" class="u-full-width" required="" placeholder="https://example.com/rss.xml">
+
+            {{ form.category.errors }}
+            <label for="{{ form.category.id_for_label }}">Category:</label>
+            {{ form.category }}
+
+            {{ form.activitypub_account_name.errors }}
+            <label for="{{ form.activitypub_account_name.id_for_label }}">Activitypub account name:</label>
+            {{ form.activitypub_account_name }}
+
+            {{ form.owner_email.errors }}
+            <label for="{{ form.owner_email.id_for_label }}">Owner email:</label>
+            {{ form.owner_email }}
+
+            <input class="button-primary u-pull-right" type="submit" value="Register!">
+        </div>
+    </div>
+</form>
+
+{% endblock %}

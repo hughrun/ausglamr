@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+
+{% block content %}
+  <div class="listing l-four header">
+      <span>Name</span>
+      <span>Category</span>
+      <span>Description</span>
+      <span>Registration Link</span>
+  </div>
+  <hr/>
+  {% for group in groups %}
+    <div class="listing l-four">
+      <span><a href="{{group.url}}">{{group.name}}</a></span>
+      <span><span class="badge badge_{{group.category}}">{{group.category_name}}</span></span>
+      <span>{{group.description}}</span>
+      <span><a href="{{group.registration_url}}">Join the {{group.reg_type}}</a></span>
+    </div>
+    <hr/>
+  {% endfor %}
+{% endblock %}

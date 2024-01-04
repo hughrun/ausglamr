@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+  <div class="listing l-three header">
+    <span>Details</span>
+    <span>Event</span>
+    <span>Closes</span>
+  </div>
+  <hr/>
+
+  {% for cfp in cfps %}
+    <div class="listing l-three">
+        <div>
+            <p><strong>{{cfp.name}}</strong></p>
+            <p>{{cfp.details}}</p>
+        </div>
+        <span><a href="{{cfp.event.url}}">{{cfp.event.name}}</a></span>
+        <span class="closing-date">{{cfp.closing_date}}</span>
+    </div>
+    <hr/>
+  {% endfor %}
+
+
+{% endblock %}

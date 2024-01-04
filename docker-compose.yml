@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:13
+    env_file: .env
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - main
+  web:
+    build: .
+    env_file: .env
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+    networks:
+      - main
+    ports:
+      - "8000:8000"
+volumes:
+  pgdata:
+networks:
+  main:

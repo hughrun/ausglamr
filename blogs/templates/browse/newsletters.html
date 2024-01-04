@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+
+{% block content %}
+  <div class="listing l-three header">
+    <span>Title</span>
+    <span>Author</span>
+    <span>Category</span>
+  </div>
+  <hr/>
+  {% for pub in news %}
+    <div class="listing l-three">
+      <span><a href="{{pub.url}}">{{pub.name}}</a></span>
+      <span>{{pub.author}}</span>
+      <span><span class="badge badge_{{pub.category}}">{{pub.category_name}}</span></span>
+    </div>
+    <hr/>
+  {% endfor %}
+{% endblock %}

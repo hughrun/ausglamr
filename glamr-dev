@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+
+# Thanks Mouse Reeve for letting me steal your idea.
+
+# exit on errors
+set -e
+
+function runweb {
+    docker compose run --rm web "$@"
+}
+
+function execdb {
+    docker compose exec db $@
+}
+
+function migrate {
+    runweb python manage.py migrate "$@"
+}
+
+CMD=$1
+if [ -n "$CMD" ]; then
+    shift
+fi
+
+# show commands as they're executed
+set -x
+
+case "$CMD" in
+
+    announce)
+        runweb python manage.py announce
+        ;;
+    black)
+        docker compose run --rm web black ausglamr blogs
+        ;;
+    check_feeds)
+        runweb python manage.py check_feeds
+        ;;
+    collectstatic)
+        runweb python manage.py collectstatic
+        ;;
+    createsuperuser)
+        runweb python manage.py createsuperuser --no-input
+        ;;
+    dbshell)
+        execdb psql -U ${POSTGRES_USER} ${POSTGRES_DB}
+        ;;
+    manage)
+        runweb python manage.py "$@"
+        ;;
+    makemigrations)
+        runweb python manage.py makemigrations "$@"
+        ;;
+    migrate)
+        migrate "$@"
+        ;;
+    pylint)
+        docker compose run --rm web pylint ausglamr blogs
+        ;;
+    queue_announcements)
+        runweb python manage.py queue_announcements
+        ;;
+    resetdb)
+        docker compose rm -svf
+        docker volume rm -f ausglamr_pgdata
+        migrate
+        ;;
+    send_weekly_email)
+        runweb python manage.py send_weekly_email
+        ;;
+    test)
+        runweb python manage.py test "$@"
+        ;;
+    *)
+        set +x
+        echo "That is not a command"
+        ;;
+esac

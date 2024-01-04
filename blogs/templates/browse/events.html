@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+  <div class="listing l-four header">
+    <span>Name</span>
+    <span>Category</span>
+    <span>Start Date</span>
+    <span>Description</span>
+  </div>
+  <hr/>
+
+
+  {% for con in cons %}
+  <div>{{con.call_for_papers.closing_date}}</div>
+    <div class="listing l-four">
+      <span><a href="{{con.url}}">{{con.name}}</a></span>
+      <span><span class="badge badge_{{con.category}}">{{con.category_name}}</span></span>
+      <span class="start-date">{{con.start_date}}</span>
+      <div>
+        <div>{{con.description}}</div>
+        {% if con.call_for_papers %}
+        <div><em><a href="{% url 'cfps' %}">{{ con.call_for_papers }}</a></em></div>
+        {% endif %}
+      </div>
+    </div>
+    <hr/>
+  {% endfor %}
+
+
+{% endblock %}
