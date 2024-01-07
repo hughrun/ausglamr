@@ -19,7 +19,7 @@ class RegisterBlogForm(forms.ModelForm):
         """set fields and model"""
 
         model = Blog
-        fields = ["url", "category", "activitypub_account_name", "owner_email"]
+        fields = ["url", "category", "activitypub_account_name", "contact_email"]
 
 
 class ConfirmBlogForm(forms.ModelForm):
@@ -37,7 +37,7 @@ class ConfirmBlogForm(forms.ModelForm):
             "description",
             "category",
             "activitypub_account_name",
-            "owner_email",
+            "contact_email",
         ]
 
 
@@ -55,7 +55,7 @@ class RegisterConferenceForm(forms.ModelForm):
             "description",
             "start_date",
             "activitypub_account_name",
-            "owner_email",
+            "contact_email",
         ]
         widgets = {
             "start_date": DateInput(),
@@ -97,7 +97,7 @@ class RegisterGroupForm(forms.ModelForm):
             "url",
             "registration_url",
             "description",
-            "owner_email",
+            "contact_email",
         ]
 
 
@@ -115,7 +115,7 @@ class RegisterNewsletterForm(forms.ModelForm):
             "url",
             "description",
             "activitypub_account_name",
-            "owner_email",
+            "contact_email",
         ]
 
 

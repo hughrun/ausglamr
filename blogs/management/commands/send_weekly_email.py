@@ -1,6 +1,7 @@
 """send the weekly email"""
 
 from datetime import timedelta
+import logging
 import random
 
 from django.conf import settings
@@ -22,7 +23,7 @@ class Command(BaseCommand):
 
         subscribers = models.Subscriber.objects.filter(confirmed=True)
 
-        print(
+        logging.info(
             f"Sending weekly emails to {len(subscribers)} subscribers at {timezone.now()}"
         )
 
@@ -31,7 +32,7 @@ class Command(BaseCommand):
         articles = models.Article.objects.filter(pubdate__gte=cutoff)
         events = models.Event.objects.filter(approved=True, pub_date__gte=cutoff)
         cfps = models.CallForPapers.objects.filter(
-            conference__approved=True, closing_date__gte=timezone.now().date()
+            event__approved=True, closing_date__gte=timezone.now().date()
         )
         newsletters = models.Newsletter.objects.filter(
             approved=True, pub_date__gte=cutoff
@@ -210,4 +211,4 @@ class Command(BaseCommand):
 
             send_email(subject, message, subscriber.email)
 
-        print(f"Weekly emails completed {timezone.now()}")
+        logging.info(f"Weekly emails completed {timezone.now()}")

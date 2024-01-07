@@ -28,11 +28,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env("SECRET_KEY")
 
+# DEPLOYMENT
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG")
-
 ALLOWED_HOSTS = [env("DOMAIN")]
+CSRF_COOKIE_SECURE=True
+SESSION_COOKIE_SECURE=True
 CSRF_TRUSTED_ORIGINS = [f'https://{env("DOMAIN")}']
+CONN_MAX_AGE=None # persistent DB connection
 
 # Application definition
 
@@ -149,6 +153,7 @@ ADMIN_EMAIL = env("ADMIN_EMAIL")  # custom
 
 # django email settings
 DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL")
+SERVER_EMAIL = env("SERVER_EMAIL")
 EMAIL_HOST = env("EMAIL_HOST")
 EMAIL_HOST_USER = env("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
@@ -158,3 +163,19 @@ EMAIL_USE_SSL = env("EMAIL_USE_SSL")
 # mastodon
 MASTODON_ACCESS_TOKEN = env("MASTODON_ACCESS_TOKEN")
 MASTODON_DOMAIN = env("MASTODON_DOMAIN")
+
+# LOGGING
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "INFO",
+    },
+}

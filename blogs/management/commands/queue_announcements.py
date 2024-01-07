@@ -16,7 +16,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         """check whether we need to queue announcements and queue them"""
 
-        conferences = models.Event.objects.filter(
+        events = models.Event.objects.filter(
             approved=True,
             announcements__lt=3,
             start_date__gte=timezone.now(),
@@ -24,10 +24,10 @@ class Command(BaseCommand):
         calls = models.CallForPapers.objects.filter(
             announcements__lt=3,
             closing_date__gte=timezone.now(),
-            conference__approved=True,
+            event__approved=True,
         )
 
-        for conf in conferences:
+        for conf in events:
             delta = conf.start_date - timezone.now().date()
 
             if (

@@ -41,7 +41,7 @@ urlpatterns = [
     path("subscribe", views.Subscribe.as_view(), name="subscribe"),
     path("subscribe-email", views.SubscribeEmail.as_view(), name="subscribe-email"),
     path(
-        "confirm-subscribe-email/<token>/<id>",
+        "confirm-subscribe-email/<token>/<user_id>",
         views.ConfirmEmail.as_view(),
         name="confirm-subscribe-email",
     ),

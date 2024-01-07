@@ -3,7 +3,7 @@
 {% block content %}
 
 <form action="{% url 'search' %}" method="get">
-    <label for="keywords">Search for keywords across blog posts, groups, newsletters, and conferences</label>
+    <label for="keywords">Search for keywords across blog posts, groups, newsletters, and events</label>
     <input type="text" name="q" value="{% if query %}{{ query }}{% endif %}">
     <button class="button" type="submit">Search!</button>
 </form>

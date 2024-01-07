@@ -1,5 +1,7 @@
 """test views"""
 
+from datetime import timedelta
+
 from unittest.mock import patch
 
 from django.contrib.auth.models import AnonymousUser
@@ -16,7 +18,7 @@ class PublicTests(TestCase):
     """Public views test cases"""
 
     def setUp(self):
-        start_date = timezone.now()
+        start_date = timezone.now() + timedelta(days=5)
 
         self.factory = RequestFactory()
         self.glam_conf = models.Event.objects.create(
@@ -53,7 +55,7 @@ class PublicTests(TestCase):
         blogs_response = self.client.get(reverse("blogs"))
         self.assertEqual(blogs_response.status_code, 200)
 
-        confs_response = self.client.get(reverse("conferences"))
+        confs_response = self.client.get(reverse("events"))
         self.assertEqual(confs_response.status_code, 200)
 
         groups_response = self.client.get(reverse("groups"))
@@ -133,15 +135,36 @@ class PublicTests(TestCase):
         exists = models.Event.objects.filter(name="My event").exists()
         self.assertTrue(exists)
 
-    def test_register_cfp(self):
+    def test_register_cfp_unapproved_event(self):
         """post CFP registration form"""
 
         view = views.RegisterCallForPapers.as_view()
         form = forms.RegisterCallForPapersForm()
         form.data["event"] = self.glam_conf.id
         form.data["name"] = "Call for Papers"
-        form.data["url"] = "https://www.example.com"
-        form.data["category"] = "GLAM"
+        form.data["details"] = "Here are some details"
+        form.data["opening_date"] = "01/01/2024"
+        form.data["closing_date"] = "28/01/2024"
+
+        request = self.factory.post("register-cfp/", form.data)
+        request.user = AnonymousUser()
+
+        view(request)
+
+        exists = models.CallForPapers.objects.filter(name="Call for Papers").exists()
+        self.assertFalse(exists)
+
+    def test_register_cfp_approved_event(self):
+        """post CFP registration form"""
+
+        self.glam_conf.approved = True
+        self.glam_conf.save()
+
+        view = views.RegisterCallForPapers.as_view()
+        form = forms.RegisterCallForPapersForm()
+        form.data["event"] = self.glam_conf.id
+        form.data["name"] = "Call for Papers"
+        form.data["details"] = "Here are some details"
         form.data["opening_date"] = "01/01/2024"
         form.data["closing_date"] = "28/01/2024"
 

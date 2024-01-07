@@ -17,7 +17,7 @@ class Event(models.Model):
     start_date = models.DateField()
     announcements = models.IntegerField(null=True, blank=True, default=0)
     activitypub_account_name = models.CharField(max_length=200, blank=True, null=True)
-    owner_email = models.EmailField(blank=True, null=True)
+    contact_email = models.EmailField(blank=True, null=True)
     approved = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):

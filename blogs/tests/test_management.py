@@ -19,7 +19,7 @@ class ManagementTestCase(TestCase):
             name="Amazing Conf",
             url="https://test.com",
             category="LIB",
-            start_date=timezone.now() + timedelta(days=3),
+            start_date=timezone.localtime(timezone.now()) + timedelta(days=3),
             activitypub_account_name="@conf@conf.conf",
             approved=True,
             announcements=1,
@@ -28,15 +28,15 @@ class ManagementTestCase(TestCase):
         self.cfp = models.CallForPapers.objects.create(
             event=self.conf,
             name="Call for Papers for Amazing Conf",
-            opening_date=timezone.now() + timedelta(days=30),
-            closing_date=timezone.now() + timedelta(days=1),
+            opening_date=timezone.localtime(timezone.now()) + timedelta(days=30),
+            closing_date=timezone.localtime(timezone.now()) + timedelta(days=1),
         )
 
         self.cfp = models.CallForPapers.objects.create(
             event=self.conf,
             name="Call for posters",
-            opening_date=timezone.now() - timedelta(days=30),
-            closing_date=timezone.now() - timedelta(days=1),
+            opening_date=timezone.localtime(timezone.now()) - timedelta(days=30),
+            closing_date=timezone.localtime(timezone.now()) - timedelta(days=1),
         )
 
     def test_queue_announcements(self):
@@ -49,7 +49,7 @@ class ManagementTestCase(TestCase):
 
         # event
         announcement = models.Announcement.objects.first()
-        start_date = timezone.now() + timedelta(days=3)
+        start_date = timezone.localtime(timezone.now()) + timedelta(days=3)
         date = start_date.strftime("%a %d %b %Y")
         status = f"Amazing Conf (@conf@conf.conf) is a event about Libraries, starting on {date}!\n\nhttps://test.com"
 
@@ -57,8 +57,8 @@ class ManagementTestCase(TestCase):
 
         # cfp
         announcement = models.Announcement.objects.last()
-        opening_date = timezone.now() + timedelta(days=30)
-        closing_date = timezone.now() + timedelta(days=1)
+        opening_date = timezone.localtime(timezone.now()) + timedelta(days=30)
+        closing_date = timezone.localtime(timezone.now()) + timedelta(days=1)
         opening_date_str = opening_date.strftime("%a %d %b %Y")
         closing_date_str = closing_date.strftime("%a %d %b %Y")
         status = f"Amazing Conf Call for Papers for Amazing Conf is open from {opening_date_str}, closing on {closing_date_str}!\n\nMore info at https://test.com"

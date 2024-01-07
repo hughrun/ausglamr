@@ -15,7 +15,7 @@ class Group(models.Model):
     url = models.URLField(max_length=400, unique=True)
     registration_url = models.URLField(max_length=400, unique=True)
     description = models.TextField(null=True, blank=True)
-    owner_email = models.EmailField(blank=True, null=True)
+    contact_email = models.EmailField(blank=True, null=True)
     announced = models.BooleanField(default=False)
     approved = models.BooleanField(default=False)
     pub_date = models.DateTimeField(null=True, default=None)

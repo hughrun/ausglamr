@@ -1,5 +1,6 @@
 {% extends "layout.html" %}
 
+{% block container %}
 <main class="container pop-boxes">
     {% block intro %}{% endblock %}
     {% block title %}
@@ -7,9 +8,6 @@
     {% endblock %}
     <section>
         {% block content %}
-
-
-
         <section>
             <p>You can contribute to <em>Aus GLAMR</em> by registering a blog, newsletter, event, or discussion group. Creators or content should be Australasian-based.</p>
         </section>
@@ -52,3 +50,4 @@
         </section>
         {% endblock %}
 </section>
+{% endblock %}

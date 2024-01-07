@@ -1,8 +1,6 @@
 """public views (no need to log in)"""
 
 # pylint: disable=R6301
-import os
-
 from itertools import chain
 from operator import attrgetter
 
@@ -20,15 +18,12 @@ from django.views import View
 from blogs import forms, models
 from blogs.utilities import get_blog_info, get_webfinger_subscribe_uri
 
+
 class HomeFeed(View):
     """the home feed when someone visits the site"""
 
     def get(self, request):
         """display home page"""
-
-        path = os.path.join(settings.BASE_DIR, "static/")
-
-        print(path)
 
         latest = models.Article.objects.order_by("-pubdate")[:10]
 
@@ -42,7 +37,9 @@ class Blogs(View):
     def get(self, request):
         """here they are"""
 
-        blogs = models.Blog.objects.filter(approved=True)
+        blogs = models.Blog.objects.filter(approved=True, active=True).order_by(
+            "-updateddate"
+        )
         for blog in blogs:
             blog.category_name = models.Category(blog.category).label
         data = {"title": "Blogs and websites", "blogs": blogs}
@@ -140,14 +137,13 @@ class RegisterBlog(View):
                 data["blog_info"] = blog_info
 
             else:
-                data["error"] = "Could not auto-discover your feed info, please enter manually"
+                data[
+                    "error"
+                ] = "Could not auto-discover your feed info, please enter manually"
 
             return render(request, "blogs/confirm-register.html", data)
 
-        data = {
-            "title": "Register your blog",
-            "form": form
-        }
+        data = {"title": "Register your blog", "form": form}
         return render(request, "blogs/register.html", data)
 
 
@@ -311,7 +307,7 @@ class Search(View):
             "description", weight="C"
         )
 
-        conferences = (
+        events = (
             models.Event.objects.annotate(rank=SearchRank(conference_vector, query))
             .filter(rank__gte=0.1)
             .order_by("-rank")
@@ -348,7 +344,7 @@ class Search(View):
         )
 
         combined = sorted(
-            chain(articles, conferences, cfps, newsletters, groups),
+            chain(articles, events, cfps, newsletters, groups),
             key=attrgetter("rank"),
             reverse=True,
         )

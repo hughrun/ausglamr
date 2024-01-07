@@ -16,7 +16,7 @@ class Newsletter(models.Model):
 
     description = models.TextField(null=True, blank=True)
     activitypub_account_name = models.CharField(max_length=200, blank=True, null=True)
-    owner_email = models.EmailField(blank=True, null=True)
+    contact_email = models.EmailField(blank=True, null=True)
     announced = models.BooleanField(default=False)
     approved = models.BooleanField(default=False)
     pub_date = models.DateTimeField(null=True, default=None)

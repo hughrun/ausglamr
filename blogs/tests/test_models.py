@@ -1,6 +1,7 @@
 """model tests"""
 
-from datetime import date
+from datetime import date, datetime
+from datetime import timezone as dt_tz
 
 from django.test import TestCase
 from django.utils import timezone
@@ -30,9 +31,12 @@ class BlogTestCase(TestCase):
 
         self.blog.failing = True
         self.blog.save()
-        self.blog.set_success()
+        self.blog.set_success(
+            updateddate=datetime(2020, 1, 1, 12, 59, 0, tzinfo=dt_tz.utc)
+        )
 
         self.assertEqual(self.blog.failing, False)
+        self.assertEqual(self.blog.updateddate.isoformat(), "2020-01-01T12:59:00+00:00")
 
     def test_set_failing(self):
         """set_failing class function"""
@@ -154,20 +158,6 @@ class NewsletterTestCase(TestCase):
 
 class UtilsTestCase(TestCase):
     """test utility functions"""
-
-    def test_announcement(self):
-        """test announcing"""
-
-        # TODO: mock mastodon somehow
-
-        # announcement = models.Announcement.objects.create(
-        #     status="I have something to say!",
-        #     summary="boasting",
-        # )
-
-        # announcement.announce()
-
-        # self.assertEqual(models.Announcement.objects.count(), 0)
 
     def test_content_warning(self):
         """test CWs"""

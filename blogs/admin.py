@@ -19,9 +19,11 @@ def approve(modeladmin, request, queryset):
         instance.announce()
 
         if hasattr(instance, "event"):  # CFP
-            recipient = instance.event.owner_email
-        if hasattr(instance, "owner_email"):  # overrides above in case needed in future
-            recipient = instance.owner_email
+            recipient = instance.event.contact_email
+        if hasattr(
+            instance, "contact_email"
+        ):  # overrides above in case needed in future
+            recipient = instance.contact_email
 
         if recipient:
             if hasattr(instance, "name"):
@@ -47,7 +49,7 @@ def suspend(modeladmin, request, queryset):
     queryset.update(suspended=True)
 
     for instance in queryset:
-        if hasattr(instance, "owner_email"):
+        if hasattr(instance, "contact_email"):
             if hasattr(instance, "name"):
                 title = instance.name
             else:
@@ -58,7 +60,7 @@ def suspend(modeladmin, request, queryset):
             <p>Your blog {title} has been suspended from AusGLAMR. It may be unsuspended in future once the issue is resolved. If you would like more information, please reply to this email.</p> \
             </body></html>"
 
-            utilities.send_email(subject, message, instance.owner_email)
+            utilities.send_email(subject, message, instance.contact_email)
 
 
 @admin.action(description="Unsuspend selected blogs")
@@ -67,7 +69,7 @@ def unsuspend(modeladmin, request, queryset):
     queryset.update(suspended=False, suspension_lifted=timezone.now())
 
     for instance in queryset:
-        if hasattr(instance, "owner_email"):
+        if hasattr(instance, "contact_email"):
             if hasattr(instance, "name"):
                 title = instance.name
             else:
@@ -78,7 +80,7 @@ def unsuspend(modeladmin, request, queryset):
             <p>The suspension on your blog {title} has been removed on AusGLAMR. Please note that articles published whilst it was suspended will not be added to AusGLAMR retrospectively. If you would like more information, please reply to this email.</p> \
             </body></html>"
 
-            utilities.send_email(subject, message, instance.owner_email)
+            utilities.send_email(subject, message, instance.contact_email)
 
 
 @admin.action(description="Confirm selected subscribers")
@@ -91,6 +93,18 @@ def confirm(modeladmin, request, queryset):
 def unconfirm(modeladmin, request, queryset):
     """unconfirm selected"""
     queryset.update(confirmed=False)
+
+
+@admin.action(description="Deactivate selected blogs")
+def disable(modeladmin, request, queryset):
+    """disable selected"""
+    queryset.update(active=False)
+
+
+@admin.action(description="Activate selected blogs")
+def activate(modeladmin, request, queryset):
+    """un-disable selected"""
+    queryset.update(active=True)
 
 
 @admin.action(description="Send confirmation request to selected subscribers")
@@ -106,16 +120,17 @@ class Blog(admin.ModelAdmin):
     """display settings for blogs"""
 
     list_display = (
-        "title",
         "url",
+        "title",
         "author_name",
         "approved",
         "announced",
         "suspended",
         "failing",
+        "active",
     )
     ordering = ["approved", "-suspended", "-failing"]
-    actions = [approve, unapprove, suspend, unsuspend]
+    actions = [approve, unapprove, suspend, unsuspend, activate, disable]
 
 
 @admin.register(models.Article)

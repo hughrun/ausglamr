@@ -1,9 +1,24 @@
 """blog models"""
 
+import re
+
 from django.db import models
 from django.utils import timezone
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
 
 from .utils import Announcement, Category, ContentWarning
+
+
+def validate_ap_address(value):
+    """is the activitypub address valid?"""
+    p = re.compile("@(.*)@((\w|-)*)\.((\w)*)")
+    m = p.match(value)
+    if not m:
+        raise ValidationError(
+            _("%(value)s should be in the form '@user@domain.tld'"),
+            params={"value": value},
+        )
 
 
 class BlogData(models.Model):
@@ -45,8 +60,11 @@ class Blog(BlogData):
     failing = models.BooleanField(default=False, blank=True, null=True)
     suspended = models.BooleanField(default=False, blank=True, null=True)
     suspension_lifted = models.DateTimeField(blank=True, null=True)
-    activitypub_account_name = models.CharField(max_length=200, blank=True, null=True)
-    owner_email = models.EmailField(blank=True, null=True)
+    active = models.BooleanField(null=True, default=True)
+    activitypub_account_name = models.CharField(
+        max_length=200, blank=True, null=True, validators=[validate_ap_address]
+    )
+    contact_email = models.EmailField(blank=True, null=True)
 
     def announce(self):
         """queue announcement"""
@@ -72,10 +90,15 @@ class Blog(BlogData):
         self.failing = True
         super().save()
 
-    def set_success(self):
-        """set failing to false"""
+    def set_success(self, updateddate):
+        """
+        set failing to false
+        set the updateddate to a datetime
+
+        """
 
         self.failing = False
+        self.updateddate = updateddate
         super().save()
 
 

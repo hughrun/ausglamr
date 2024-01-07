@@ -3,15 +3,16 @@
 {% block content %}
   <div class="listing l-three header">
     <div>Title</div>
-    <div>Author</div>
     <div>Category</div>
+    <div>Last updated</div>
   </div>
   <hr/>
   {% for blog in blogs %}
   <div class="listing l-three">
-    <div><a href="{{blog.url}}">{{blog.title}}</a></div>
-    <div>{{blog.author_name}}</div>
+    <div><a href="{{blog.url}}">{{blog.title}}</a><p>{{blog.description}}</p></div>
     <div><div class="end badge badge_{{blog.category}}">{{blog.category_name}}</div></div>
+    <div>{{ blog.updateddate|date:"D d M Y" }}
+    </div>
   </div>
   <hr/>
   {% endfor %}
