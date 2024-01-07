@@ -1,6 +1,6 @@
 """test utility functions"""
 
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 from unittest.mock import patch
 
@@ -66,14 +66,17 @@ class CommandsTestCase(TestCase):
         tag_two = FeedParserTagMock(term="python")
         tag_three = FeedParserTagMock(term="notglam")
 
+        updated_parsed = (datetime.now(timezone.utc) - timedelta(hours=3)).timetuple()
+        published_parsed = (datetime.now(timezone.utc) - timedelta(hours=3)).timetuple()
+
         article = FeedParserItemMock(
             title="My amazing blog post",
             tags=[tag_one, tag_two],
             author="Hugh Rundle",
             link="https://test.com/1",
             summary="A short summary of my post",
-            updated_parsed=(2024, 1, 1, 19, 48, 21, 3, 1, 0),
-            published_parsed=(2024, 1, 1, 19, 48, 21, 3, 1, 0),
+            updated_parsed=updated_parsed,
+            published_parsed=published_parsed,
             id="1",
         )
 
@@ -83,14 +86,37 @@ class CommandsTestCase(TestCase):
             author="Hugh Rundle",
             link="https://test.com/2",
             summary="A short summary of my next post",
-            updated_parsed=(2024, 1, 2, 19, 48, 21, 3, 1, 0),
-            published_parsed=(2024, 1, 2, 19, 48, 21, 3, 1, 0),
+            updated_parsed=updated_parsed,
+            published_parsed=published_parsed,
             id="999",
         )
 
-        self.feedparser = FeedParserMock(entries=[article])
+        article_three = FeedParserItemMock(
+            title="My really old blog post",
+            tags=[tag_one, tag_two],
+            author="Hugh Rundle",
+            link="https://test.com/2",
+            summary="A short summary of my next post",
+            updated_parsed=(2023, 1, 3, 19, 48, 21, 3, 1, 0),
+            published_parsed=(2023, 1, 3, 19, 48, 21, 3, 1, 0),
+            id="999",
+        )
 
+        article_four = FeedParserItemMock(
+            title="My new nice post",
+            tags=[tag_one, tag_two],
+            author="Hugh Rundle",
+            link="https://test.com/3",
+            summary="A short summary of my next post",
+            updated_parsed=updated_parsed,
+            published_parsed=published_parsed,
+            id="333",
+        )
+
+        self.feedparser = FeedParserMock(entries=[article])
+        self.feedparser_old = FeedParserMock(entries=[article_three])
         self.feedparser_exclude = FeedParserMock(entries=[article_two])
+        self.feedparser_new = FeedParserMock(entries=[article_four])
 
     def test_check_feeds(self):
         """test parse a feed for basic blog info"""
@@ -108,6 +134,77 @@ class CommandsTestCase(TestCase):
             self.assertEqual(models.Tag.objects.count(), 2)
             article = models.Article.objects.all().first()
             self.assertEqual(article.title, "My amazing blog post")
+
+            # should be announced
+            self.assertEqual(models.Announcement.objects.count(), 1)
+
+    def test_check_feeds_duplicate(self):
+        """test we do not ingest the same post twice"""
+
+        args = {"-q": True}
+        opts = {}
+
+        self.assertEqual(models.Article.objects.count(), 0)
+        self.assertEqual(models.Tag.objects.count(), 0)
+
+        with patch("feedparser.parse", return_value=self.feedparser):
+            call_command("check_feeds", *args, **opts)
+
+            self.assertEqual(models.Article.objects.count(), 1)
+            self.assertEqual(models.Tag.objects.count(), 2)
+            article = models.Article.objects.all().first()
+            self.assertEqual(article.title, "My amazing blog post")
+
+        with patch("feedparser.parse", return_value=self.feedparser):
+            call_command("check_feeds", *args, **opts)
+
+            self.assertEqual(models.Article.objects.count(), 1)
+            self.assertEqual(models.Tag.objects.count(), 2)
+
+    def test_check_feeds_new(self):
+        """test we ingest new post if id is different"""
+
+        args = {"-q": True}
+        opts = {}
+
+        self.assertEqual(models.Article.objects.count(), 0)
+        self.assertEqual(models.Tag.objects.count(), 0)
+
+        with patch("feedparser.parse", return_value=self.feedparser):
+            call_command("check_feeds", *args, **opts)
+
+            self.assertEqual(models.Article.objects.count(), 1)
+            self.assertEqual(models.Tag.objects.count(), 2)
+            article = models.Article.objects.all().first()
+            self.assertEqual(article.title, "My amazing blog post")
+
+        with patch("feedparser.parse", return_value=self.feedparser_new):
+            call_command("check_feeds", *args, **opts)
+
+            self.assertEqual(models.Article.objects.count(), 2)
+            self.assertEqual(models.Tag.objects.count(), 2)
+            article = models.Article.objects.all().last()
+            self.assertEqual(article.title, "My new nice post")
+
+    def test_check_feeds_old_post(self):
+        """test parse a feed with a post older than a week"""
+
+        args = {"-q": True}
+        opts = {}
+
+        self.assertEqual(models.Article.objects.count(), 0)
+        self.assertEqual(models.Tag.objects.count(), 0)
+
+        with patch("feedparser.parse", return_value=self.feedparser_old):
+            value = call_command("check_feeds", *args, **opts)
+
+            # should be ingested
+            self.assertEqual(models.Article.objects.count(), 1)
+            self.assertEqual(models.Tag.objects.count(), 2)
+
+            # should not be announced
+            self.assertEqual(models.Announcement.objects.count(), 0)
+
 
     def test_check_feeds_exclude_tag(self):
         """test parse a feed with exclude tag"""
@@ -185,9 +282,7 @@ class CommandsTestCase(TestCase):
         self.assertEqual(models.Tag.objects.count(), 0)
 
         self.blog.suspended = False
-        self.blog.suspension_lifted = datetime(
-            2024, 1, 2, 21, 0, 0, 0, tzinfo=timezone.utc
-        )
+        self.blog.suspension_lifted = datetime.now(timezone.utc) - timedelta(minutes=1)
         self.blog.save()
 
         with patch("feedparser.parse", return_value=self.feedparser):

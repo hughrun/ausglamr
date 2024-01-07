@@ -308,7 +308,7 @@ class Search(View):
         )
 
         events = (
-            models.Event.objects.annotate(rank=SearchRank(conference_vector, query))
+            models.Event.objects.filter(approved=True).annotate(rank=SearchRank(conference_vector, query))
             .filter(rank__gte=0.1)
             .order_by("-rank")
         )
@@ -318,7 +318,7 @@ class Search(View):
         )
 
         cfps = (
-            models.CallForPapers.objects.annotate(rank=SearchRank(cfp_vector, query))
+            models.CallForPapers.objects.filter(approved=True).annotate(rank=SearchRank(cfp_vector, query))
             .filter(rank__gte=0.1)
             .order_by("-rank")
         )
@@ -328,7 +328,7 @@ class Search(View):
         )
 
         newsletters = (
-            models.Newsletter.objects.annotate(rank=SearchRank(news_vector, query))
+            models.Newsletter.objects.filter(approved=True).annotate(rank=SearchRank(news_vector, query))
             .filter(rank__gte=0.1)
             .order_by("-rank")
         )
@@ -338,7 +338,7 @@ class Search(View):
         )
 
         groups = (
-            models.Event.objects.annotate(rank=SearchRank(group_vector, query))
+            models.Event.objects.filter(approved=True).annotate(rank=SearchRank(group_vector, query))
             .filter(rank__gte=0.1)
             .order_by("-rank")
         )
