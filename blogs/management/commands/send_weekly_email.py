@@ -200,6 +200,8 @@ class Command(BaseCommand):
             coming_events,
         ]
         body = "".join(sections)
+        if body == "":
+            body = "<p>No new updates this week.</p><p>Why not spend the time you would have been reading, publishing your own blog post instead?</p>"
 
         for subscriber in subscribers:
             opt_out = f"https://{settings.DOMAIN}/unsubscribe-email/{subscriber.token}/{subscriber.id}"
