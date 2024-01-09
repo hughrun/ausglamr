@@ -9,12 +9,12 @@ from .utils import Announcement, Category
 class Newsletter(models.Model):
     """a newsletter"""
 
-    name = models.CharField(max_length=999)
-    author = models.CharField(max_length=999)
+    name = models.CharField(max_length=100)
+    author = models.CharField(max_length=100)
     category = models.CharField(choices=Category.choices, max_length=4)
     url = models.URLField(max_length=400, unique=True)
 
-    description = models.TextField(null=True, blank=True)
+    description = models.TextField(null=True, blank=True, max_length=250)
     activitypub_account_name = models.CharField(max_length=200, blank=True, null=True)
     contact_email = models.EmailField(blank=True, null=True)
     announced = models.BooleanField(default=False)

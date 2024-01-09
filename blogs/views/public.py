@@ -6,6 +6,7 @@ from operator import attrgetter
 
 from django.conf import settings
 from django.shortcuts import get_object_or_404
+from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.search import SearchRank, SearchVector
 from django.utils.translation import gettext_lazy as _
 from django.core.mail import EmailMessage
@@ -34,12 +35,21 @@ class HomeFeed(View):
 class Blogs(View):
     """browse the list of blogs"""
 
-    def get(self, request):
+    def get(self, request, category=None):
         """here they are"""
 
-        blogs = models.Blog.objects.filter(approved=True, active=True).order_by(
-            "-updateddate"
-        )
+        if category:
+
+            blogs = models.Blog.objects.filter(approved=True, active=True, category=category).order_by(
+                "-updateddate"
+            )
+
+        else:
+
+            blogs = models.Blog.objects.filter(approved=True, active=True).order_by(
+                "-updateddate"
+            )
+
         for blog in blogs:
             blog.category_name = models.Category(blog.category).label
         data = {"title": "Blogs and websites", "blogs": blogs}
@@ -49,18 +59,22 @@ class Blogs(View):
 class Conferences(View):
     """browse the list of conferences"""
 
-    def get(self, request):
+    def get(self, request, category=None):
         """here they are"""
         now = timezone.now()
-        cons = models.Event.objects.filter(approved=True, start_date__gte=now).order_by(
-            "start_date"
-        )
+
+        if category:
+            cons = models.Event.objects.filter(approved=True, start_date__gte=now, category=category).order_by(
+                "start_date"
+            )
+        else:
+            cons = models.Event.objects.filter(approved=True, start_date__gte=now).order_by(
+                "start_date"
+            )
+
         for con in cons:
             con.category_name = models.Category(con.category).label
-            con.call_for_papers = con.cfp.all().last()
-            if con.call_for_papers and (con.call_for_papers.closing_date > now.date()):
-                date = con.call_for_papers.closing_date.strftime("%a %d %b %Y")
-                con.call_for_papers = f"{con.call_for_papers.name} closes {date}"
+            con.call_for_papers = con.cfp.filter(closing_date__gte=timezone.now()).order_by("-closing_date").last()
 
         data = {"title": "Upcoming events", "cons": cons}
         return render(request, "browse/events.html", data)
@@ -82,9 +96,15 @@ class CallsForPapers(View):
 class Groups(View):
     """browse the list of groups"""
 
-    def get(self, request):
+    def get(self, request, category=None):
         """here they are"""
-        groups = models.Group.objects.filter(approved=True).order_by("name")
+
+        if category:
+            groups = models.Group.objects.filter(approved=True, category=category).order_by("name")
+
+        else:
+            groups = models.Group.objects.filter(approved=True).order_by("name")
+
         for group in groups:
             group.category_name = models.Category(group.category).label
             group.reg_type = models.utils.GroupType(group.type).label
@@ -188,17 +208,7 @@ class RegisterConference(View):
         if form.is_valid():
             conf = form.save()
             send_email("event", conf)
-            cfp_form = forms.RegisterCallForPapersForm({"event": conf.id})
-            data = {
-                "title": "Register your Call for Papers",
-                "form": cfp_form,
-                "conf_name": conf.name,
-            }
-
-            return render(request, "events/cfp.html", data)
-
-        data = {"title": "Complete blog registration", "form": form, "errors": True}
-        return render(request, "events/register.html", data)
+            return redirect("/thankyou/conference")
 
 
 class RegisterCallForPapers(View):
@@ -292,13 +302,16 @@ class Search(View):
         query = request.GET.get("q")
 
         article_vector = (
-            SearchVector("tags__name", weight="A")
+            SearchVector("tagnames", weight="A")
             + SearchVector("title", weight="B")
             + SearchVector("description", weight="C")
         )
 
         articles = (
-            models.Article.objects.annotate(rank=SearchRank(article_vector, query))
+            models.Article.objects.annotate(
+                tagnames=ArrayAgg("tags__name", distinct=True), # see above: this prevents many-to-many objects like tags causing the same article to appear in the results multiple times
+                rank=SearchRank(article_vector, query)
+                )
             .filter(rank__gte=0.1)
             .order_by("-rank")
         )
@@ -308,7 +321,8 @@ class Search(View):
         )
 
         events = (
-            models.Event.objects.filter(approved=True).annotate(rank=SearchRank(conference_vector, query))
+            models.Event.objects.filter(approved=True)
+            .annotate(rank=SearchRank(conference_vector, query))
             .filter(rank__gte=0.1)
             .order_by("-rank")
         )
@@ -318,7 +332,8 @@ class Search(View):
         )
 
         cfps = (
-            models.CallForPapers.objects.filter(approved=True).annotate(rank=SearchRank(cfp_vector, query))
+            models.CallForPapers.objects.filter(approved=True)
+            .annotate(rank=SearchRank(cfp_vector, query))
             .filter(rank__gte=0.1)
             .order_by("-rank")
         )
@@ -328,7 +343,8 @@ class Search(View):
         )
 
         newsletters = (
-            models.Newsletter.objects.filter(approved=True).annotate(rank=SearchRank(news_vector, query))
+            models.Newsletter.objects.filter(approved=True)
+            .annotate(rank=SearchRank(news_vector, query))
             .filter(rank__gte=0.1)
             .order_by("-rank")
         )
@@ -338,7 +354,8 @@ class Search(View):
         )
 
         groups = (
-            models.Event.objects.filter(approved=True).annotate(rank=SearchRank(group_vector, query))
+            models.Group.objects.filter(approved=True)
+            .annotate(rank=SearchRank(group_vector, query))
             .filter(rank__gte=0.1)
             .order_by("-rank")
         )

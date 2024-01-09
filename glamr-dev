@@ -30,6 +30,11 @@ case "$CMD" in
     announce)
         runweb python manage.py announce
         ;;
+    backup)
+        /snap/bin/docker exec -u root ausglamr_db_1 pg_dump -v -Fc -U ausglamr -d "ausglamr" -f /tmp/ausglamr_backup.dump
+        /snap/bin/docker cp ausglamr_db_1:/tmp/ausglamr_backup.dump /home/hugh/backups/
+        mv /home/hugh/backups/ausglamr_backup.dump /home/hugh/backups/ausglamr_backup_$(date +'%a').dump
+        ;;
     black)
         docker compose run --rm web black ausglamr blogs
         ;;

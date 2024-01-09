@@ -1,20 +1,28 @@
 {% extends "layout.html" %}
 
 {% block content %}
-  <div class="listing l-three header">
-    <div>Title</div>
-    <div>Category</div>
-    <div>Last updated</div>
+<div>
+  <a href="{% url 'register-blog' %}"><button class="button button-first">Add a Blog</button></a>
+</div>
+<div class="listing l-three header">
+  <div>Title</div>
+  <div>Category</div>
+  <div>Last updated</div>
+</div>
+<hr/>
+{% for blog in blogs %}
+<div class="listing l-three">
+  <div>
+    <p><a href="{{blog.url}}">{{blog.title}}</a></p>
+    <p>{{blog.description}}</p>
   </div>
-  <hr/>
-  {% for blog in blogs %}
-  <div class="listing l-three">
-    <div><a href="{{blog.url}}">{{blog.title}}</a><p>{{blog.description}}</p></div>
-    <div><div class="end badge badge_{{blog.category}}">{{blog.category_name}}</div></div>
-    <div>{{ blog.updateddate|date:"D d M Y" }}
-    </div>
+  <div><div class="end badge badge_{{blog.category}}"><a href="/blogs/{{blog.category}}">{{blog.category_name}}</a></div></div>
+  <div>{{ blog.updateddate|date:"D d M Y" }}
   </div>
-  <hr/>
-  {% endfor %}
+</div>
+<hr/>
+{% empty %}
+<p>Oh no! There are no blogs currently registered. Try checking out <a href="{% url 'newsletters' %}">some newsletters</a>.</p>
+{% endfor %}
 
 {% endblock %}

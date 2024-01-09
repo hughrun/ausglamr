@@ -9,6 +9,8 @@
 
     {% if register_type == "email address" %}
     <p>Check your inbox to confirm your subscription. You can opt-out at any time by clicking the link at the bottom of the weekly emails.</p>
+    {% elif register_type == "conference" %}
+    <p>Once your conference is approved, you will be able to register a <a href="{% url 'cfps' %}">Call for Papers</a> if you would like to do so.</p>
     {% else %}
     <p>Your {{ register_type }} registration will be reviewed before being added to <em>Aus GLAMR</em>.</p>
     {% endif %}

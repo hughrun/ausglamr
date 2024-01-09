@@ -28,7 +28,9 @@ class Command(BaseCommand):
         )
 
         cutoff = timezone.now() - timedelta(days=7)
-        blogs = models.Blog.objects.filter(approved=True, updateddate__gte=cutoff)
+        blogs = models.Blog.objects.filter(
+            approved=True, active=True, added__gte=cutoff
+        )
         articles = models.Article.objects.filter(pubdate__gte=cutoff)
         events = models.Event.objects.filter(approved=True, pub_date__gte=cutoff)
         cfps = models.CallForPapers.objects.filter(

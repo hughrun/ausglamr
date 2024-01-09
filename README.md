@@ -5,15 +5,18 @@ A django app running on Docker. Replaces _Aus GLAM Blogs_.
 ## Deploy
 
 * `docker compose build`
-* `./glamr-dev createsuperuser`
-* `./glamr-dev makemigrations`
+* `./glamr-dev makemigrations` (may get a DB connection error here, ignore it or run again)
 * `./glamr-dev migrate`
+* `./glamr-dev createsuperuser`
 * `docker compose up`
 
 * set up database backups (as cron jobs):
 
-    * `/usr/bin/docker exec -u root ausglamr-db-1 pg_dump -v -Fc -U ausglamr -d "ausglamr" -f /tmp/ausglamr_backup.dump`
-    * `/usr/bin/docker cp ausglamr-db-1:/tmp/ausglamr_backup.dump /home/hugh/backups/`
+* `./glamr-dev backup`
+
+    * `/snap/bin/docker exec -u root ausglamr_db_1 pg_dump -v -Fc -U ausglamr -d "ausglamr" -f /tmp/ausglamr_backup.dump`
+    * `/snap/bin/docker cp ausglamr_db_1:/tmp/ausglamr_backup.dump /home/hugh/backups/`
+    * `mv /home/hugh/backups/ausglamr_backup.dump /home/hugh/backups/ausglamr_backup_$(date +'%a').dump`
 
 * set up cron jobs for management commands as below
 

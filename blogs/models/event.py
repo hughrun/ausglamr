@@ -9,10 +9,10 @@ from .utils import Announcement, Category
 class Event(models.Model):
     """a event"""
 
-    name = models.CharField(max_length=999)
+    name = models.CharField(max_length=100)
     category = models.CharField(choices=Category.choices, max_length=4)
     url = models.URLField(max_length=400, unique=True)
-    description = models.TextField(null=True, blank=True)
+    description = models.TextField(null=True, blank=True, max_length=250)
     pub_date = models.DateTimeField()  # for RSS feed
     start_date = models.DateField()
     announcements = models.IntegerField(null=True, blank=True, default=0)
@@ -55,9 +55,9 @@ class CallForPapers(models.Model):
     """a event call for papers/presentations"""
 
     name = models.CharField(
-        max_length=999
+        max_length=100
     )  # "Call for papers", "call for participation" etc
-    details = models.TextField(null=True, blank=True)
+    details = models.TextField(null=True, blank=True, max_length=250)
     pub_date = models.DateTimeField(null=True, default=None)
     opening_date = models.DateField()
     closing_date = models.DateField()

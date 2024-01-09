@@ -205,7 +205,6 @@ class CommandsTestCase(TestCase):
             # should not be announced
             self.assertEqual(models.Announcement.objects.count(), 0)
 
-
     def test_check_feeds_exclude_tag(self):
         """test parse a feed with exclude tag"""
 

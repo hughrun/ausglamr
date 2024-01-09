@@ -25,7 +25,7 @@ class BlogData(models.Model):
     """Base bloggy data"""
 
     title = models.CharField(max_length=2000)
-    author_name = models.CharField(max_length=1000, null=True)
+    author_name = models.CharField(max_length=1000, null=True, blank=True)
     url = models.URLField(max_length=2000, unique=True)
     description = models.TextField(null=True, blank=True)
     updateddate = models.DateTimeField()
@@ -55,6 +55,7 @@ class Blog(BlogData):
 
     feed = models.URLField(max_length=2000)
     category = models.CharField(choices=Category.choices, max_length=4)
+    added = models.DateTimeField()
     approved = models.BooleanField(default=False)
     announced = models.BooleanField(default=False)
     failing = models.BooleanField(default=False, blank=True, null=True)
@@ -65,6 +66,11 @@ class Blog(BlogData):
         max_length=200, blank=True, null=True, validators=[validate_ap_address]
     )
     contact_email = models.EmailField(blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        if not self.added:
+            self.added = timezone.now()
+        super().save(*args, **kwargs)
 
     def announce(self):
         """queue announcement"""
@@ -108,7 +114,7 @@ class Article(BlogData):
     blog = models.ForeignKey(Blog, on_delete=models.CASCADE, related_name="articles")
     pubdate = models.DateTimeField()
     guid = models.CharField(max_length=2000)
-    tags = models.ManyToManyField("Tag", related_name="articles")
+    tags = models.ManyToManyField("Tag", related_name="articles", null=True, blank=True)
 
     # pylint: disable=undefined-variable
     def announce(self):

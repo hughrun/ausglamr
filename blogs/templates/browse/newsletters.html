@@ -1,6 +1,9 @@
 {% extends "layout.html" %}
 
 {% block content %}
+  <div>
+    <a href="{% url 'register-newsletter' %}"><button class="button button-first">Add a Newsletter</button></a>
+  </div>
   <div class="listing l-three header">
     <span>Title</span>
     <span>Author</span>
@@ -11,8 +14,10 @@
     <div class="listing l-three">
       <span><a href="{{pub.url}}">{{pub.name}}</a></span>
       <span>{{pub.author}}</span>
-      <span><span class="badge badge_{{pub.category}}">{{pub.category_name}}</span></span>
+      <span><span class="badge badge_{{pub.category}}"><a href="/newsletters/{{pub.category}}">{{pub.category_name}}</a></span></span>
     </div>
     <hr/>
+  {% empty %}
+  <p>Oh no! There are no newsletter currently registered. Try checking out <a href="{% url 'blogs' %}">some blogs</a>.</p>
   {% endfor %}
 {% endblock %}

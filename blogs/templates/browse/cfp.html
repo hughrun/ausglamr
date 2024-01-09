@@ -10,7 +10,7 @@
   <hr/>
 
   {% for cfp in cfps %}
-    <div class="listing l-three">
+    <div class="listing l-three" id="cfp_{{cfp.id}}">
         <div>
             <p><strong>{{cfp.name}}</strong></p>
             <p>{{cfp.details}}</p>
@@ -19,7 +19,9 @@
         <span class="closing-date">{{cfp.closing_date}}</span>
     </div>
     <hr/>
-  {% endfor %}
+    {% empty %}
+    <p>Oh no! There are no Calls for Papers currently open. Try checking out <a href="{% url 'newsletters' %}">some newsletters</a>.</p>
+    {% endfor %}
 
 
 {% endblock %}

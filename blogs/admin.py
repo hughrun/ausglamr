@@ -20,9 +20,7 @@ def approve(modeladmin, request, queryset):
 
         if hasattr(instance, "event"):  # CFP
             recipient = instance.event.contact_email
-        if hasattr(
-            instance, "contact_email"
-        ):  # overrides above in case needed in future
+        if hasattr(instance, "contact_email"):
             recipient = instance.contact_email
 
         if recipient:
@@ -32,7 +30,10 @@ def approve(modeladmin, request, queryset):
                 title = instance.title
 
             subject = f"✅ {title} has been approved on AusGLAMR!"
-            message = f"<html><body><p>{title} has been approved on <a href='https://{settings.DOMAIN}'>AusGLAMR</a>. Hooray!</p></body></html>"
+            message = f"<html><body><p>{title} has been approved on <a href='https://{settings.DOMAIN}'>AusGLAMR</a>. Hooray!</p>"
+            if type(instance).__name__ == "Event":
+                message += f"<p>You can now optionally <a href='https://{settings.DOMAIN}/register-cfp'>register a call for papers</a>.</p>"
+            message += "</body></html>"
 
             utilities.send_email(subject, message, recipient)
 
