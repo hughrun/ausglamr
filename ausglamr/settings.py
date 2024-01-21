@@ -32,7 +32,7 @@ SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG")
-ALLOWED_HOSTS = ['.localhost', '127.0.0.1', '[::1]', env("DOMAIN")]
+ALLOWED_HOSTS = [".localhost", "127.0.0.1", "[::1]", env("DOMAIN")]
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 CSRF_TRUSTED_ORIGINS = [f'https://{env("DOMAIN")}']

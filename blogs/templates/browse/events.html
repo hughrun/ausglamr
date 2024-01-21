@@ -2,8 +2,9 @@
 
 {% block content %}
 
-<div>
-  <a href="{% url 'register-event' %}"><button class="button button-first">Add an Event</button></a>
+<div class="buttons">
+  <a href="{% url 'cfps' %}"><button class="button button-primary button-first">Open CFPs</button></a>
+  <a href="{% url 'register-event' %}"><button class="button">Add an Event</button></a>
   <a href="{% url 'register-cfp' %}"><button class="button">Add a CFP</button></a>
 </div>
 <div class="listing l-three header">

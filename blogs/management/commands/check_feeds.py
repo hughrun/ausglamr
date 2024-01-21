@@ -9,9 +9,12 @@ import feedparser
 
 from django.core.management.base import BaseCommand
 from django.db.models import Q
+from django.utils import html
 from django.utils import timezone as django_timezone
 
 from blogs import models
+
+agent = "AusGLAMR/1.0 +https://ausglamr.newcardigan.org"
 
 
 def date_to_tz_aware(date_tuple):
@@ -58,11 +61,11 @@ class Command(BaseCommand):
         ).all()
         for blog in blogs:
             try:
-                data = feedparser.parse(blog.feed)
+                data = feedparser.parse(blog.feed, agent=agent)
 
                 for article in data.entries:
                     if not models.Article.objects.filter(
-                        Q(url=article.link) | Q(guid=article.id)
+                        Q(url=article.link) | Q(guid=getattr(article, "id", article.link))
                     ).exists():
                         if blog.suspension_lifted and (
                             blog.suspension_lifted
@@ -102,15 +105,30 @@ class Command(BaseCommand):
                                 blog, "author", None
                             )
 
+                            description = (
+                                html.strip_tags(article.summary)
+                                if (
+                                    hasattr(article, "summary")
+                                    and len(article.summary) > 0
+                                )
+                                else html.strip_tags(article.description)
+                                if (
+                                    hasattr(article, "description")
+                                    and len(article.summary)
+                                )
+                                else html.strip_tags(article.content[0].value)[:200]
+                            )
+                            description += "..."
+
                             instance = models.Article.objects.create(
                                 title=article.title,
                                 author_name=author_name,
                                 url=article.link,
-                                description=article.summary,
+                                description=description,
                                 updateddate=date_to_tz_aware(article.updated_parsed),
                                 blog=blog,
                                 pubdate=date_to_tz_aware(article.published_parsed),
-                                guid=article.id,
+                                guid=getattr(article, "id", article.link),
                             )
 
                             tags_to_add = get_tags(
@@ -135,6 +153,64 @@ class Command(BaseCommand):
             except Exception as e:
                 blog.set_failing()
                 logging.error(f"ERROR WITH BLOG {blog.title} - {blog.url}")
+                logging.info(article)
+                logging.error(e)
+
+        newsletters = models.Newsletter.objects.filter(
+            approved=True, active=True, feed__isnull=False
+        ).all()
+        for newsletter in newsletters:
+            try:
+                data = feedparser.parse(newsletter.feed, agent=agent)
+
+                for edition in data.entries:
+                    if not models.Edition.objects.filter(
+                        Q(url=edition.link) | Q(guid=getattr(edition, "id", edition.link))
+                    ).exists():
+                        author_name = getattr(edition, "author", None) or getattr(
+                            blog, "author", None
+                        )
+
+                        description = (
+                            html.strip_tags(edition.summary)
+                            if (
+                                hasattr(edition, "summary") and len(edition.summary)
+                            )
+                            else html.strip_tags(edition.description)
+                            if (
+                                hasattr(edition, "description") and len(edition.summary)
+                            )
+                            else html.strip_tags(edition.content[0].value)[:200] + "..."
+                        )
+                        description += "..."
+
+                        instance = models.Edition.objects.create(
+                            title=edition.title,
+                            author_name=author_name,
+                            url=edition.link,
+                            description=description,
+                            updateddate=date_to_tz_aware(edition.updated_parsed),
+                            newsletter=newsletter,
+                            pubdate=date_to_tz_aware(edition.published_parsed),
+                            guid=getattr(edition, "id", edition.link),
+                        )
+
+                        instance.save()
+
+                        cutoff = django_timezone.now() - timedelta(days=3)
+                        newish = instance.pubdate > cutoff
+                        if newish:
+                            instance.announce()
+
+                    newsletter.set_success(
+                        updateddate=date_to_tz_aware(edition.updated_parsed)
+                    )
+
+            except Exception as e:
+                newsletter.set_failing()
+                logging.error(
+                    f"ERROR WITH NEWSLETTER {newsletter.name} - {newsletter.url}"
+                )
                 logging.error(e)
 
         if not options["q"]:

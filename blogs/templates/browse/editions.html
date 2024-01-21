@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    {% for edition in latest %}
+    <div class="card">
+        <div class="card-title">
+            <a href="{{ edition.url }}"><h4>{{ edition.title }}</h4></a>
+            <p class="meta">
+                {% if edition.author_name %}
+                <span class="author_name">{{ edition.author_name }}</span> |
+                {% endif %}
+                <span class="blog_title">{{ edition.newsletter.title }}</span>
+            </p>
+        </div>
+        {% if edition.description %}
+        <div class="card-body">
+            {% autoescape off %}
+            <p>{{ edition.description|truncatewords_html:60  }}</p>
+            {% endautoescape %}
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+{% endblock %}

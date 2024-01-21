@@ -1,8 +1,9 @@
 {% extends "layout.html" %}
 
 {% block content %}
-  <div>
-    <a href="{% url 'register-newsletter' %}"><button class="button button-first">Add a Newsletter</button></a>
+  <div class="buttons">
+    <a href="{% url 'newsletter-editions' %}"><button class="button button-primary button-first">Latest editions</button></a>
+    <a href="{% url 'register-newsletter' %}"><button class="button">Add a Newsletter</button></a>
   </div>
   <div class="listing l-three header">
     <span>Title</span>
@@ -12,7 +13,12 @@
   <hr/>
   {% for pub in news %}
     <div class="listing l-three">
-      <span><a href="{{pub.url}}">{{pub.name}}</a></span>
+      <span>
+        <a href="{{pub.url}}">{{pub.name}}</a>
+        {% if pub.feed %}
+        <a href="{{pub.feed}}">{% include 'utils/rss-img.html' %}</a>
+        {% endif %}
+      </span>
       <span>{{pub.author}}</span>
       <span><span class="badge badge_{{pub.category}}"><a href="/newsletters/{{pub.category}}">{{pub.category_name}}</a></span></span>
     </div>

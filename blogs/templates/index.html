@@ -1,36 +1,12 @@
 {% extends "layout.html" %}
 
-{% block intro %}
+{% block intro %}{% endblock %}
+
+{% block content %}
 <section>
     <p><em>Aus GLAMR</em> is the place to find out what's happening in the Australasian cultural memory professions. Whether you work in galleries, libraries, archives, museums, or records, you'll find the latest blog posts, conferences and events, newsletters, and discussion groups here!</p>
     <p>Browse one of the lists, <a href="{% url 'search' %}">search by keywords</a>, or <a href="{% url 'contribute' %}">contribute by registering</a> your blog, event, group or newsletter.</p>
     <p>You can stay up to date by following the Mastodon bot or subscribing to email updates or to one of the RSS feeds - check out the <a href="{% url 'subscribe' %}">subscribe page</a>.</p>
     <p>Please note that whilst off-topic or egregiously offensive content may be refused or removed, inclusion on this site does not imply endorsement by Hugh or newCardigan of the content of any particular listed publication or event.</p>
 </section>
-{% endblock %}
-
-{% block content %}
-    {% for article in latest %}
-    <div class="card">
-        <div class="card-title">
-            <a href="{{ article.url }}"><h3>{{ article.title }}</h3></a>
-            <p class="meta">
-                {% if article.author_name %}
-                <span class="author_name">{{ article.author_name }}</span> |
-                {% endif %}
-                <span class="blog_title">{{ article.blog.title }}</span>
-            </p>
-            {% for tag in article.tags.all %}
-            <a href="{% url 'browse' %}?q={{ tag.name|urlencode }}"><span class="badge">{{ tag.name }}</span></a>
-            {% endfor %}
-        </div>
-        {% if article.description %}
-        <div class="card-body">
-            {% autoescape off %}
-            <p>{{ article.description|truncatewords_html:60  }}</p>
-            {% endautoescape %}
-        </div>
-        {% endif %}
-    </div>
-    {% endfor %}
 {% endblock %}

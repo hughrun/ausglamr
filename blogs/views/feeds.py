@@ -71,3 +71,6 @@ class EventFeed(Feed):
     def item_categories(self, item):
         """event GLAMR category"""
         return [_(item.category)]
+
+
+# TODO: newsletter editions feed

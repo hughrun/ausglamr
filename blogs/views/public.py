@@ -26,9 +26,10 @@ class HomeFeed(View):
     def get(self, request):
         """display home page"""
 
+        # TODO: what do we want on front page?
         latest = models.Article.objects.order_by("-pubdate")[:10]
 
-        data = {"title": "Latest blog posts", "latest": latest}
+        data = {"title": "", "latest": latest}
         return render(request, "index.html", data)
 
 
@@ -39,13 +40,11 @@ class Blogs(View):
         """here they are"""
 
         if category:
-
-            blogs = models.Blog.objects.filter(approved=True, active=True, category=category).order_by(
-                "-updateddate"
-            )
+            blogs = models.Blog.objects.filter(
+                approved=True, active=True, category=category
+            ).order_by("-updateddate")
 
         else:
-
             blogs = models.Blog.objects.filter(approved=True, active=True).order_by(
                 "-updateddate"
             )
@@ -54,6 +53,17 @@ class Blogs(View):
             blog.category_name = models.Category(blog.category).label
         data = {"title": "Blogs and websites", "blogs": blogs}
         return render(request, "browse/blogs.html", data)
+
+class Articles(View):
+    """Blog articles"""
+
+    def get(self, request):
+        """here they are"""
+        latest = models.Article.objects.order_by("-pubdate")[:10]
+
+        data = {"title": "Latest blog posts", "latest": latest}
+        return render(request, "browse/articles.html", data)
+
 
 
 class Conferences(View):
@@ -64,17 +74,21 @@ class Conferences(View):
         now = timezone.now()
 
         if category:
-            cons = models.Event.objects.filter(approved=True, start_date__gte=now, category=category).order_by(
-                "start_date"
-            )
+            cons = models.Event.objects.filter(
+                approved=True, start_date__gte=now, category=category
+            ).order_by("start_date")
         else:
-            cons = models.Event.objects.filter(approved=True, start_date__gte=now).order_by(
-                "start_date"
-            )
+            cons = models.Event.objects.filter(
+                approved=True, start_date__gte=now
+            ).order_by("start_date")
 
         for con in cons:
             con.category_name = models.Category(con.category).label
-            con.call_for_papers = con.cfp.filter(closing_date__gte=timezone.now()).order_by("-closing_date").last()
+            con.call_for_papers = (
+                con.cfp.filter(closing_date__gte=timezone.now())
+                .order_by("-closing_date")
+                .last()
+            )
 
         data = {"title": "Upcoming events", "cons": cons}
         return render(request, "browse/events.html", data)
@@ -100,7 +114,9 @@ class Groups(View):
         """here they are"""
 
         if category:
-            groups = models.Group.objects.filter(approved=True, category=category).order_by("name")
+            groups = models.Group.objects.filter(
+                approved=True, category=category
+            ).order_by("name")
 
         else:
             groups = models.Group.objects.filter(approved=True).order_by("name")
@@ -122,6 +138,17 @@ class Newsletters(View):
             letter.category_name = models.Category(letter.category).label
         data = {"title": "Newsletters", "news": news}
         return render(request, "browse/newsletters.html", data)
+
+
+class Editions(View):
+    """Newsletter editions"""
+
+    def get(self, request):
+        """here they are"""
+        latest = models.Edition.objects.order_by("-pubdate")[:10]
+
+        data = {"title": "Latest newsletter editions", "latest": latest}
+        return render(request, "browse/editions.html", data)
 
 
 class RegisterBlog(View):
@@ -309,9 +336,11 @@ class Search(View):
 
         articles = (
             models.Article.objects.annotate(
-                tagnames=ArrayAgg("tags__name", distinct=True), # see above: this prevents many-to-many objects like tags causing the same article to appear in the results multiple times
-                rank=SearchRank(article_vector, query)
-                )
+                tagnames=ArrayAgg(
+                    "tags__name", distinct=True
+                ),  # see above: this prevents many-to-many objects like tags causing the same article to appear in the results multiple times
+                rank=SearchRank(article_vector, query),
+            )
             .filter(rank__gte=0.1)
             .order_by("-rank")
         )
@@ -349,6 +378,17 @@ class Search(View):
             .order_by("-rank")
         )
 
+        edn_vector = SearchVector("title", weight="A") + SearchVector(
+            "description", weight="C"
+        )
+
+        editions = (
+            models.Edition.objects.filter()
+            .annotate(rank=SearchRank(edn_vector, query))
+            .filter(rank__gte=0.1)
+            .order_by("-rank")
+        )
+
         group_vector = SearchVector("name", weight="A") + SearchVector(
             "description", weight="C"
         )
@@ -361,7 +401,7 @@ class Search(View):
         )
 
         combined = sorted(
-            chain(articles, events, cfps, newsletters, groups),
+            chain(articles, events, editions, cfps, newsletters, groups),
             key=attrgetter("rank"),
             reverse=True,
         )

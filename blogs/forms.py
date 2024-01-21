@@ -2,6 +2,7 @@
 
 from django import forms
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 from .models import Blog, CallForPapers, Event, Group, Newsletter, Subscriber
 
@@ -82,6 +83,10 @@ class RegisterCallForPapersForm(forms.ModelForm):
             "closing_date": DateInput(),
         }
 
+        help_texts = {
+            "name": _("'Call for papers', 'Call for participation' etc"),
+        }
+
 
 class RegisterGroupForm(forms.ModelForm):
     """form for registering a group"""
@@ -113,10 +118,17 @@ class RegisterNewsletterForm(forms.ModelForm):
             "author",
             "category",
             "url",
+            "feed",
             "description",
             "activitypub_account_name",
             "contact_email",
         ]
+
+        help_texts = {
+            "feed": _(
+                "The Atom/RSS feed of your newsletter. If you include this, issues will be shown in AusGLAMR"
+            ),
+        }
 
 
 class ContactForm(forms.Form):

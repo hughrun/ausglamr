@@ -1,8 +1,9 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<div>
-  <a href="{% url 'register-blog' %}"><button class="button button-first">Add a Blog</button></a>
+<div class="buttons">
+  <a href="{% url 'blog-articles' %}"><button class="button button-primary button-first">Latest posts</button></a>
+  <a href="{% url 'register-blog' %}"><button class="button">Add a Blog</button></a>
 </div>
 <div class="listing l-three header">
   <div>Title</div>
@@ -13,7 +14,7 @@
 {% for blog in blogs %}
 <div class="listing l-three">
   <div>
-    <p><a href="{{blog.url}}">{{blog.title}}</a></p>
+    <p><a href="{{blog.url}}">{{blog.title}}</a><a href="{{blog.feed}}">{% include 'utils/rss-img.html' %}</a></p>
     <p>{{blog.description}}</p>
   </div>
   <div><div class="end badge badge_{{blog.category}}"><a href="/blogs/{{blog.category}}">{{blog.category_name}}</a></div></div>

@@ -192,9 +192,27 @@ class Group(admin.ModelAdmin):
 class Newsletter(admin.ModelAdmin):
     """display settings for newsletters"""
 
-    list_display = ("name", "approved", "category", "description")
-    ordering = ["approved", "name"]
-    actions = [approve, unapprove]
+    list_display = (
+        "name",
+        "approved",
+        "announced",
+        "failing",
+        "active",
+    )
+    ordering = ["approved", "-failing"]
+    actions = [approve, unapprove, suspend, activate, disable]
+
+
+@admin.register(models.Edition)
+class Edition(admin.ModelAdmin):
+    """display settings for editions"""
+
+    date_hierarchy = "pubdate"
+    list_display = ("title", "newsletter_name", "pubdate")
+
+    def newsletter_name(self, obj):  # pylint: disable=no-self-use
+        """get the title of the parent newsletter"""
+        return obj.newsletter.name
 
 
 @admin.register(models.ContentWarning)

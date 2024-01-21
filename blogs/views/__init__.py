@@ -3,6 +3,7 @@
 from .public import (
     ConfirmBlogRegistration,
     HomeFeed,
+    Articles,
     Blogs,
     Browse,
     Contribute,
@@ -10,6 +11,7 @@ from .public import (
     Conferences,
     ConfirmEmail,
     CallsForPapers,
+    Editions,
     Groups,
     Help,
     Newsletters,

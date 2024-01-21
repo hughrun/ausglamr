@@ -33,6 +33,7 @@
 
             <label for="{{ form.feed.id_for_label }}">Feed:</label>
             <input type="text" name="feed" id="feed" value="{{ blog_info.feed }}" class="u-full-width" required="" placeholder="https://example.com/rss.xml">
+            <span class="helptext">The Atom/RSS feed of your blog. Articles will be shown in AusGLAMR.</span>
 
             {{ form.category.errors }}
             <label for="{{ form.category.id_for_label }}">Category:</label>
