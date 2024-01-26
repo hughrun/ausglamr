@@ -4,6 +4,8 @@ A django app running on Docker. Replaces _Aus GLAM Blogs_.
 
 ## Deploy
 
+* `cp .env.example .env` and enter env values for your app
+* set up web server config (nginx example coming soon)
 * `docker compose build`
 * `./glamr-dev makemigrations` (may get a DB connection error here, ignore it or run again)
 * `./glamr-dev migrate`
