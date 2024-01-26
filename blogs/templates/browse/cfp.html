@@ -1,7 +1,13 @@
 {% extends "layout.html" %}
 
-{% block content %}
+{% block feed %}
+<link href="events/feed" type="application/atom+xml" rel="alternate" title="Aus GLAMR Events" />
+{% endblock %}
 
+{% block content %}
+<div class="buttons">
+  <a href="{% url 'register-cfp' %}"><button class="button">Add a CFP</button></a>
+</div>
   <div class="listing l-three header">
     <span>Details</span>
     <span>Event</span>

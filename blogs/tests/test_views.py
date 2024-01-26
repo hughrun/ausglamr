@@ -202,7 +202,7 @@ class PublicTests(TestCase):
         view = views.RegisterNewsletter.as_view()
         form = forms.RegisterNewsletterForm()
         form.data["name"] = "My newsletter"
-        form.data["author"] = "Bob Bobson"
+        form.data["author_name"] = "Bob Bobson"
         form.data["url"] = "https://www.example.com"
         form.data["category"] = "LIB"
 

@@ -15,7 +15,7 @@
                 </hgroup>
                 <p>Get a weekly update listing the latest blog posts, open calls for papers, and upcoming events.</p>
                 <div>
-                    <a class="button" href="{% url 'subscribe-email' %}">Subscribe via email</a>
+                    <a class="button button-primary" href="{% url 'subscribe-email' %}">Subscribe</a>
                 </div>
             </section>
 
@@ -23,13 +23,13 @@
                 <hgroup>
                     <h3>Subscribe via ActivityPub</h3>
                 </hgroup>
-                <p>Follow the <code class="code">@blogs@ausglam.space</code> bot to see an announcement every time a new blog post , event, or call for papers is published.</p>
+                <p>Follow <code class="code">@ausglamr@ausglam.space</code> to see an announcement every time something is added.</p>
                 <form method="post" action="{% url 'subscribe' %}">
                     {% csrf_token %}
                     <label for="username">Enter address you want to follow from</label>
                     {{ form.errors.username }}
                     <input type="text" name="username" placeholder="@user@example.social">
-                    <button class="button u-pull-right" type="submit">Follow</button>
+                    <button class="button button-primary u-pull-right" type="submit">Follow</button>
                 </form>
             </section>
 
@@ -37,11 +37,12 @@
                 <hgroup>
                     <h3>Subscribe via RSS</h3>
                 </hgroup>
-                <p>Subscribe to the blogs feed in your favourite RSS reader to get a combined feed with every new article.</p>
-                <p>Or subscribe to the events feed to be the first to know about upcoming events.</p>
+                <p>Ok technically it's Atom. Subscribe to the feed to stay up to date using your favourite feed reader.</p>
                 <div>
-                    <a class="button" href="{% url 'article-feed' %}">blog posts</a>
-                    <a class="button" href="{% url 'event-feed' %}">events</a>
+                    <a class="button" href="{% url 'article-feed' %}">blog posts</a><br/>
+                    <a class="button" href="{% url 'event-feed' %}">events & cfps</a><br/>
+                    <a class="button" href="{% url 'edition-feed' %}">newsletter editions</a><br/>
+                    <a class="button button-primary" href="{% url 'feed' %}">everything</a>
                 </div>
             </section>
 

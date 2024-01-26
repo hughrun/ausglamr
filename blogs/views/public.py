@@ -51,8 +51,9 @@ class Blogs(View):
 
         for blog in blogs:
             blog.category_name = models.Category(blog.category).label
-        data = {"title": "Blogs and websites", "blogs": blogs}
+        data = {"title": "Blogs and websites", "blogs": blogs, "category": category}
         return render(request, "browse/blogs.html", data)
+
 
 class Articles(View):
     """Blog articles"""
@@ -65,8 +66,7 @@ class Articles(View):
         return render(request, "browse/articles.html", data)
 
 
-
-class Conferences(View):
+class Events(View):
     """browse the list of conferences"""
 
     def get(self, request, category=None):
@@ -90,7 +90,7 @@ class Conferences(View):
                 .last()
             )
 
-        data = {"title": "Upcoming events", "cons": cons}
+        data = {"title": "Upcoming events", "cons": cons, "category": category}
         return render(request, "browse/events.html", data)
 
 
@@ -124,19 +124,29 @@ class Groups(View):
         for group in groups:
             group.category_name = models.Category(group.category).label
             group.reg_type = models.utils.GroupType(group.type).label
-        data = {"title": "Groups and discussion lists", "groups": groups}
+        data = {
+            "title": "Groups and discussion lists",
+            "groups": groups,
+            "category": category,
+        }
         return render(request, "browse/groups.html", data)
 
 
 class Newsletters(View):
     """browse the list of groups"""
 
-    def get(self, request):
+    def get(self, request, category=None):
         """here they are"""
-        news = models.Newsletter.objects.filter(approved=True).order_by("name")
+        if category:
+            news = models.Newsletter.objects.filter(
+                approved=True, category=category
+            ).order_by("name")
+        else:
+            news = models.Newsletter.objects.filter(approved=True).order_by("name")
+
         for letter in news:
             letter.category_name = models.Category(letter.category).label
-        data = {"title": "Newsletters", "news": news}
+        data = {"title": "Newsletters", "news": news, "category": category}
         return render(request, "browse/newsletters.html", data)
 
 
@@ -423,7 +433,7 @@ class Search(View):
 
 
 class Browse(View):
-    """browse by clicking on a tag"""
+    """browse blog articles by clicking on a tag"""
 
     def get(self, request):
         """display browse results"""

@@ -115,7 +115,7 @@ class RegisterNewsletterForm(forms.ModelForm):
         model = Newsletter
         fields = [
             "name",
-            "author",
+            "author_name",
             "category",
             "url",
             "feed",

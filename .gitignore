@@ -1,2 +1,5 @@
-data
+/data
 fixtures
+/static
+.env.dev
+z_README_Hugh.md

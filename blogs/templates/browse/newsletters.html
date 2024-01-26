@@ -1,5 +1,9 @@
 {% extends "layout.html" %}
 
+{% block feed %}
+<link href="newsletter-editions/feed" type="application/atom+xml" rel="alternate" title="Aus GLAMR Newsletters" />
+{% endblock %}
+
 {% block content %}
   <div class="buttons">
     <a href="{% url 'newsletter-editions' %}"><button class="button button-primary button-first">Latest editions</button></a>
@@ -19,11 +23,11 @@
         <a href="{{pub.feed}}">{% include 'utils/rss-img.html' %}</a>
         {% endif %}
       </span>
-      <span>{{pub.author}}</span>
+      <span>{{pub.author_name}}</span>
       <span><span class="badge badge_{{pub.category}}"><a href="/newsletters/{{pub.category}}">{{pub.category_name}}</a></span></span>
     </div>
     <hr/>
   {% empty %}
-  <p>Oh no! There are no newsletter currently registered. Try checking out <a href="{% url 'blogs' %}">some blogs</a>.</p>
+  <p>Oh no! There are no newsletter currently registered{% if category %} under '{{category}}'{% endif %}. Try checking out <a href="{% url 'blogs' %}">some blogs</a>.</p>
   {% endfor %}
 {% endblock %}

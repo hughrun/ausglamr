@@ -139,7 +139,7 @@ class NewsletterTestCase(TestCase):
         """set up test newsletter"""
         self.news = models.Newsletter.objects.create(
             name="Awesome news",
-            author="Hugh",
+            author_name="Hugh",
             url="https://test.com",
             category="ARC",
         )

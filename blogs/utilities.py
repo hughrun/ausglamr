@@ -22,7 +22,9 @@ def get_feed_info(feed):
     blog["feed"] = feed
     blog["title"] = getattr(b.feed, "title", "")
     blog["author_name"] = getattr(b.feed, "author", None)
-    blog["description"] = getattr(b.feed, "subtitle", None) # summary for a FEED is "subtitle"
+    blog["description"] = getattr(
+        b.feed, "subtitle", None
+    )  # summary for a FEED is "subtitle"
 
     return blog
 

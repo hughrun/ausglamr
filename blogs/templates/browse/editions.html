@@ -1,5 +1,9 @@
 {% extends "layout.html" %}
 
+{% block feed %}
+<link href="newsletter-editions/feed" type="application/atom+xml" rel="alternate" title="Aus GLAMR Newsletters" />
+{% endblock %}
+
 {% block content %}
     {% for edition in latest %}
     <div class="card">
@@ -9,7 +13,7 @@
                 {% if edition.author_name %}
                 <span class="author_name">{{ edition.author_name }}</span> |
                 {% endif %}
-                <span class="blog_title">{{ edition.newsletter.title }}</span>
+                <span class="blog_title">{{ edition.newsletter.name }}</span>
             </p>
         </div>
         {% if edition.description %}
@@ -20,5 +24,7 @@
         </div>
         {% endif %}
     </div>
+    {% empty %}
+    <p>Oh no! There are no editions available. Try checking out <a href="{% url 'blog-articles' %}">some blog posts</a>.</p>
     {% endfor %}
 {% endblock %}

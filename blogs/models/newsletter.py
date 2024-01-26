@@ -10,7 +10,7 @@ class Newsletter(models.Model):
     """a newsletter"""
 
     name = models.CharField(max_length=100)
-    author = models.CharField(max_length=100)
+    author_name = models.CharField(max_length=100)
     category = models.CharField(choices=Category.choices, max_length=4)
     url = models.URLField(max_length=400, unique=True)
     feed = models.URLField(max_length=1000, unique=True, blank=True, null=True)
@@ -24,17 +24,21 @@ class Newsletter(models.Model):
     failing = models.BooleanField(default=False, blank=True, null=True)
 
     updateddate = models.DateTimeField()
-    pub_date = models.DateTimeField(null=True, default=None)
+    pubdate = models.DateTimeField(null=True, default=None)
+
+    def __str__(self):
+        """display for admin dropdowns"""
+        return self.name
 
     def announce(self):
         """create a event announcement"""
 
         category = Category(self.category).label
-        name = self.name
+        name = self.author_name
         if self.activitypub_account_name:
-            name = f"{self.name} ({self.activitypub_account_name})"
+            name = f"{self.author_name} ({self.activitypub_account_name})"
 
-        status = f"{name} is a newsletter about {category} from {self.author}. Check it out:\n\n{self.url}"
+        status = f"{self.name} is a newsletter about {category} from {name}. Check it out:\n\n{self.url}"
 
         Announcement.objects.create(status=status)
         self.announced = True
@@ -74,5 +78,21 @@ class Edition(models.Model):
     newsletter = models.ForeignKey(
         Newsletter, on_delete=models.CASCADE, related_name="editions"
     )
-    pubdate = models.DateTimeField()
+    pubdate = models.DateTimeField(null=True, default=timezone.now)
     guid = models.CharField(max_length=2000)
+
+    def announce(self):
+        """queue an edition announcement"""
+
+        author = self.newsletter.activitypub_account_name or self.author_name
+
+        if self.newsletter.activitypub_account_name:
+            author = f"{self.newsletter.activitypub_account_name} - "
+        elif self.author_name:
+            author = f"{self.author_name} - "
+        else:
+            author = ""
+
+        status = f"📬 {self.title} ({author}{self.newsletter.name})\n\n{self.url}"
+
+        Announcement.objects.create(status=status)

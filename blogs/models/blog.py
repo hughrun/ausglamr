@@ -29,6 +29,7 @@ class BlogData(models.Model):
     url = models.URLField(max_length=2000, unique=True)
     description = models.TextField(null=True, blank=True)
     updateddate = models.DateTimeField()
+    pubdate = models.DateTimeField(null=True, default=timezone.now)
 
     class Meta:
         """This is an abstract model for common data"""
@@ -107,7 +108,6 @@ class Article(BlogData):
     """A blog post"""
 
     blog = models.ForeignKey(Blog, on_delete=models.CASCADE, related_name="articles")
-    pubdate = models.DateTimeField()
     guid = models.CharField(max_length=2000)
     tags = models.ManyToManyField("Tag", related_name="articles")
 

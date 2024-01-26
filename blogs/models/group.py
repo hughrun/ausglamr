@@ -16,9 +16,10 @@ class Group(models.Model):
     registration_url = models.URLField(max_length=400, unique=True)
     description = models.TextField(null=True, blank=True, max_length=250)
     contact_email = models.EmailField(blank=True, null=True)
+
     announced = models.BooleanField(default=False)
     approved = models.BooleanField(default=False)
-    pub_date = models.DateTimeField(null=True, default=None)
+    pubdate = models.DateTimeField(null=True, default=timezone.now)
 
     def announce(self):
         """create a group announcement"""
@@ -30,8 +31,3 @@ class Group(models.Model):
         Announcement.objects.create(status=status)
         self.announced = True
         super().save()
-
-    def save(self, *args, **kwargs):
-        if not self.pub_date:
-            self.pub_date = timezone.now()
-        super().save(*args, **kwargs)

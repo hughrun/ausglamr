@@ -33,6 +33,27 @@ class FeedParserItemMock(object):
         self.id = id
 
 
+class FeedParserEditionMock(object):
+    title = ""
+    author = ""
+    link = ""
+    summary = ""
+    updated_parsed = ((),)
+    published_parsed = ((),)
+    id = ""
+
+    def __init__(
+        self, title, author, link, summary, updated_parsed, published_parsed, id
+    ):
+        self.title = title
+        self.author
+        self.link = link
+        self.summary = summary
+        self.updated_parsed = updated_parsed
+        self.published_parsed = published_parsed
+        self.id = id
+
+
 class FeedParserTagMock(object):
     term = ""
 
@@ -60,6 +81,14 @@ class CommandsTestCase(TestCase):
             category="LIB",
             approved=True,
             suspended=False,
+        )
+
+        models.Newsletter.objects.create(
+            name="My awesome newsletter",
+            url="https://test.news",
+            feed="https://test.news/feed",
+            category="ARC",
+            approved=True,
         )
 
         tag_one = FeedParserTagMock(term="testing")
@@ -113,15 +142,26 @@ class CommandsTestCase(TestCase):
             id="333",
         )
 
+        edition = FeedParserEditionMock(
+            title="My amazing newsletter edition",
+            author="Hugh Rundle",
+            link="https://news.letter/1",
+            summary="A summary of my edition",
+            updated_parsed=updated_parsed,
+            published_parsed=published_parsed,
+            id="1",
+        )
+
         self.feedparser = FeedParserMock(entries=[article])
         self.feedparser_old = FeedParserMock(entries=[article_three])
         self.feedparser_exclude = FeedParserMock(entries=[article_two])
         self.feedparser_new = FeedParserMock(entries=[article_four])
+        self.feedparser_edition = FeedParserMock(entries=[edition])
 
     def test_check_feeds(self):
         """test parse a feed for basic blog info"""
 
-        args = {"-q": True}
+        args = {"-q": True, "-blogs": True}
         opts = {}
 
         self.assertEqual(models.Article.objects.count(), 0)
@@ -135,13 +175,31 @@ class CommandsTestCase(TestCase):
             article = models.Article.objects.all().first()
             self.assertEqual(article.title, "My amazing blog post")
 
-            # should be announced
+            # should be set to be announced
+            self.assertEqual(models.Announcement.objects.count(), 1)
+
+    def test_check_edition_feeds(self):
+        """test parse a feed for newsletter edition info"""
+
+        args = {"-q": True, "-newsletters": True}
+        opts = {}
+
+        self.assertEqual(models.Edition.objects.count(), 0)
+
+        with patch("feedparser.parse", return_value=self.feedparser_edition):
+            value = call_command("check_feeds", *args, **opts)
+
+            self.assertEqual(models.Edition.objects.count(), 1)
+            edition = models.Edition.objects.all().first()
+            self.assertEqual(edition.title, "My amazing newsletter edition")
+
+            # should be set to be announced
             self.assertEqual(models.Announcement.objects.count(), 1)
 
     def test_check_feeds_duplicate(self):
         """test we do not ingest the same post twice"""
 
-        args = {"-q": True}
+        args = {"-q": True, "-blogs": True}
         opts = {}
 
         self.assertEqual(models.Article.objects.count(), 0)
@@ -164,7 +222,7 @@ class CommandsTestCase(TestCase):
     def test_check_feeds_new(self):
         """test we ingest new post if id is different"""
 
-        args = {"-q": True}
+        args = {"-q": True, "-blogs": True}
         opts = {}
 
         self.assertEqual(models.Article.objects.count(), 0)
@@ -189,7 +247,7 @@ class CommandsTestCase(TestCase):
     def test_check_feeds_old_post(self):
         """test parse a feed with a post older than a week"""
 
-        args = {"-q": True}
+        args = {"-q": True, "-blogs": True}
         opts = {}
 
         self.assertEqual(models.Article.objects.count(), 0)
@@ -212,7 +270,7 @@ class CommandsTestCase(TestCase):
         self.assertEqual(models.Tag.objects.count(), 0)
 
         with patch("feedparser.parse", return_value=self.feedparser_exclude):
-            args = {"-q": True}
+            args = {"-q": True, "-blogs": True}
             opts = {}
 
             value = call_command("check_feeds", *args, **opts)
@@ -230,7 +288,7 @@ class CommandsTestCase(TestCase):
         self.blog.save()
 
         with patch("feedparser.parse", return_value=self.feedparser):
-            args = {"-q": True}
+            args = {"-q": True, "-blogs": True}
             opts = {}
 
             value = call_command("check_feeds", *args, **opts)
@@ -248,7 +306,7 @@ class CommandsTestCase(TestCase):
         self.blog.save()
 
         with patch("feedparser.parse", return_value=self.feedparser):
-            args = {"-q": True}
+            args = {"-q": True, "-blogs": True}
             opts = {}
 
             value = call_command("check_feeds", *args, **opts)
@@ -266,7 +324,7 @@ class CommandsTestCase(TestCase):
         self.blog.save()
 
         with patch("feedparser.parse", return_value=self.feedparser):
-            args = {"-q": True}
+            args = {"-q": True, "-blogs": True}
             opts = {}
 
             value = call_command("check_feeds", *args, **opts)

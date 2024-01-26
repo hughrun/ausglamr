@@ -30,7 +30,7 @@
     {% with 'aus-glam-blogs' as anchor %}
     {% url 'help' as the_url %}
     <h4 id="{{anchor}}">What happened to Aus GLAM Blogs?</h4><a href="{{ the_url }}/#{{anchor}}">🔗</a>
-    <p><em>Aus GLAM Blogs</em> was focussed on blogs specifically. <em>Aus GLAMR</em> is the successor, now including more GLAMR content. All the blog articles from the original site have been migrated and will be inluded in your search results.</p>
+    <p><em>Aus GLAM Blogs</em> was focussed on blogs specifically. <em>Aus GLAMR</em> is the successor, now including more GLAMR content. All the blog articles from the original site have been migrated and will be included in your search results.</p>
     {% endwith %}
 
     {% with 'pocket' as anchor %}
@@ -43,6 +43,14 @@
     {% url 'help' as the_url %}
     <h4 id="{{anchor}}">Activitypub account name!!???</h4><a href="{{ the_url }}/#{{anchor}}">🔗</a>
     <p>ActivityPub is the protocol used by Mastodon, BlueSky, BookWyrm, Threads, and other "fediverse" social media. If you include an account name, it will be mentioned when your registered thing is announced by the AusGLAMR Mastodon bot. If you'd like to join the "fediverse", try <a href="https://ausglam.space">Aus GLAM Space</a>.</p>
+    {% endwith %}
+
+    {% with 'aus' as anchor %}
+    {% url 'help' as the_url %}
+    <h4 id="{{anchor}}">Why 'Aus' GLAMR?</h4><a href="{{ the_url }}/#{{anchor}}">🔗</a>
+    <p>The "Aus" is short for "Australasia". This is kind of a cheat - GLAMR content from Australia, Aotearoa/New Zealand, and our neighbours is welcome. I considered calling it "ANZ GLAMR" but I didn't want to do the Australian thing of pretending that Aotearoa/New Zealand is practically just another state of Australia with no cultural or institutional differences.</p>
+    <p>Opening it up to the whole world would likely result in the same thing that happens on every other English-language website: an assumed default of United States of America context, and a drowning out of anything else.</p>
+    <p>In short this aggregator is made by an Australian in Australia with that context in mind. Kiwis and other South-West Pacific neighbours are super welcome to contribute, but they also have their own context and may prefer their own thing. I can't speak for them.</p>
     {% endwith %}
 </section>
 

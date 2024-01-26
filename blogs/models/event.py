@@ -13,7 +13,7 @@ class Event(models.Model):
     category = models.CharField(choices=Category.choices, max_length=4)
     url = models.URLField(max_length=400, unique=True)
     description = models.TextField(null=True, blank=True, max_length=250)
-    pub_date = models.DateTimeField()  # for RSS feed
+    pubdate = models.DateTimeField()  # for RSS feed
     start_date = models.DateField()
     announcements = models.IntegerField(null=True, blank=True, default=0)
     activitypub_account_name = models.CharField(max_length=200, blank=True, null=True)
@@ -21,8 +21,8 @@ class Event(models.Model):
     approved = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
-        if not self.pub_date:
-            self.pub_date = timezone.now()
+        if not self.pubdate:
+            self.pubdate = timezone.now()
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -58,7 +58,7 @@ class CallForPapers(models.Model):
         max_length=100
     )  # "Call for papers", "call for participation" etc
     details = models.TextField(null=True, blank=True, max_length=250)
-    pub_date = models.DateTimeField(null=True, default=None)
+    pubdate = models.DateTimeField(null=True, default=timezone.now)
     opening_date = models.DateField()
     closing_date = models.DateField()
     announcements = models.IntegerField(null=True, default=0)
@@ -77,9 +77,3 @@ class CallForPapers(models.Model):
             Announcement.objects.create(status=status)
             self.announcements = self.announcements + 1
             super().save()
-
-    def save(self, *args, **kwargs):
-        """save a CFP with pub_date"""
-        if not self.pub_date:
-            self.pub_date = timezone.now()
-        super().save(*args, **kwargs)

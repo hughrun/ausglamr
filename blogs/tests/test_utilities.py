@@ -11,12 +11,12 @@ from blogs import models, utilities
 class FeedParserFeedMock(object):
     title = ""
     author = ""
-    summary = ""
+    subtitle = ""
 
-    def __init__(self, title, author, summary):
+    def __init__(self, title, author, subtitle):
         self.title = title
         self.author = author
-        self.summary = summary
+        self.subtitle = subtitle
 
 
 class FeedParserMock(object):
@@ -48,11 +48,11 @@ class UtilityTests(TestCase):
         feed = FeedParserFeedMock(
             title="My amazing blog",
             author="Hugh Rundle",
-            summary="A short summary of my blog",
+            subtitle="A short summary of my blog",
         )
 
         feed_partial = FeedParserFeedMock(
-            title="My amazing blog", author=None, summary=None
+            title="My amazing blog", author=None, subtitle=None
         )
 
         self.feedparser = FeedParserMock(feed=feed)

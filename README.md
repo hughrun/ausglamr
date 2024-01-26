@@ -12,17 +12,13 @@ A django app running on Docker. Replaces _Aus GLAM Blogs_.
 
 * set up database backups (as cron jobs):
 
-* `./glamr-dev backup`
+* `./glamr-dev backup`:
 
     * `/snap/bin/docker exec -u root ausglamr_db_1 pg_dump -v -Fc -U ausglamr -d "ausglamr" -f /tmp/ausglamr_backup.dump`
     * `/snap/bin/docker cp ausglamr_db_1:/tmp/ausglamr_backup.dump /home/hugh/backups/`
     * `mv /home/hugh/backups/ausglamr_backup.dump /home/hugh/backups/ausglamr_backup_$(date +'%a').dump`
 
 * set up cron jobs for management commands as below
-
-## Migrating
-
-See `data/help.txt`
 
 ## Admin
 
@@ -33,6 +29,7 @@ Don't forget to add some Content Warnings for use by the Mastodon bot.
 Use `glamr-dev` to make your life easier (thanks to Mouse Reeve for the inspiration):
 
 * announce
+* backup
 * check_feeds
 * manage [django management command]
 * makemigrations
@@ -77,6 +74,8 @@ Run every 21 mins.
 
 This checks all blog feeds for any new posts, and adds them to the database as long as they don't have an exclusion tag and were not published during a time the blog was suspended.
 
+Also checks newsletter articles if there is a feed.
+
 Run every hour.
 
 ### queue_announcements
@@ -90,3 +89,9 @@ Run daily.
 Does what you think. Creates a weekly email of the latest stuff, and send to everyone in Subscribers.
 
 Run weekly.
+
+### Backups
+
+There is a `backup` command in `glamr-dev`. You can adjust the filepaths in your `.env` file.
+
+Run daily

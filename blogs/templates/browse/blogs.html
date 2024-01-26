@@ -1,5 +1,9 @@
 {% extends "layout.html" %}
 
+{% block feed %}
+<link href="blog-articles/feed" type="application/atom+xml" rel="alternate" title="Aus GLAMR Blogs" />
+{% endblock %}
+
 {% block content %}
 <div class="buttons">
   <a href="{% url 'blog-articles' %}"><button class="button button-primary button-first">Latest posts</button></a>
@@ -23,7 +27,7 @@
 </div>
 <hr/>
 {% empty %}
-<p>Oh no! There are no blogs currently registered. Try checking out <a href="{% url 'newsletters' %}">some newsletters</a>.</p>
+<p>Oh no! There are no blogs currently registered{% if category %} under '{{category}}'{% endif %}. Try checking out <a href="{% url 'newsletters' %}">some newsletters</a>.</p>
 {% endfor %}
 
 {% endblock %}

@@ -1,5 +1,9 @@
 {% extends "layout.html" %}
 
+{% block feed %}
+<link href="blog-articles/feed" type="application/atom+xml" rel="alternate" title="Aus GLAMR Blogs" />
+{% endblock %}
+
 {% block content %}
     {% for post in latest %}
     <div class="card">
@@ -25,5 +29,7 @@
         </div>
         {% endif %}
     </div>
+    {% empty %}
+    <p>Oh no! There are no articles available. Try checking out <a href="{% url 'newsletter-editions' %}">some newsletter editions</a>.</p>
     {% endfor %}
 {% endblock %}

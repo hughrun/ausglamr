@@ -8,7 +8,7 @@ from .public import (
     Browse,
     Contribute,
     Contact,
-    Conferences,
+    Events,
     ConfirmEmail,
     CallsForPapers,
     Editions,
@@ -27,4 +27,4 @@ from .public import (
     UnsubscribeEmail,
 )
 
-from .feeds import ArticleFeed, EventFeed
+from .feeds import ArticleFeed, EditionFeed, EventFeed, CombinedFeed

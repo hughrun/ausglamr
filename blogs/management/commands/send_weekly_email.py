@@ -32,14 +32,15 @@ class Command(BaseCommand):
             approved=True, active=True, added__gte=cutoff
         )
         articles = models.Article.objects.filter(pubdate__gte=cutoff)
-        events = models.Event.objects.filter(approved=True, pub_date__gte=cutoff)
+        events = models.Event.objects.filter(approved=True, pubdate__gte=cutoff)
         cfps = models.CallForPapers.objects.filter(
             event__approved=True, closing_date__gte=timezone.now().date()
         )
         newsletters = models.Newsletter.objects.filter(
-            approved=True, pub_date__gte=cutoff
+            approved=True, pubdate__gte=cutoff
         )
-        groups = models.Group.objects.filter(approved=True, pub_date__gte=cutoff)
+        editions = models.Edition.objects.filter(pubdate__gte=cutoff)
+        groups = models.Group.objects.filter(approved=True, pubdate__gte=cutoff)
 
         new_blogs = ""
         for blog in blogs:
@@ -78,8 +79,30 @@ class Command(BaseCommand):
 
         if new_articles != "":
             new_articles = (
-                "<h3 style='margin-top:20px;'>New Articles</h3>"
+                "<h3 style='margin-top:20px;'>New Blog Posts</h3>"
                 + new_articles
+                + "<hr/>"
+            )
+
+        new_editions = ""
+        for edition in editions:
+            title_string = f"<h4><a href='{edition.url}'>{edition.title}</a></h4>"
+            author_string = (
+                f"<p><em>{edition.author_name}</em></p>" if edition.author_name else ""
+            )
+            description_string = (
+                f"<p style='margin-bottom:24px;'>{edition.description}</p>"
+            )
+
+            string_list = [title_string, author_string, description_string]
+            string = "".join(string_list)
+
+            new_editions = new_editions + string
+
+        if new_editions != "":
+            new_editions = (
+                "<h3 style='margin-top:20px;'>New Newsletter Editions</h3>"
+                + new_editions
                 + "<hr/>"
             )
 
@@ -195,6 +218,7 @@ class Command(BaseCommand):
         subject = f"{emoji} Fresh Aus GLAMR updates for the week of {dt.day} {dt:%B} {dt.year}"
         sections = [
             new_articles,
+            new_editions,
             new_blogs,
             new_newsletters,
             new_groups,
@@ -203,7 +227,7 @@ class Command(BaseCommand):
         ]
         body = "".join(sections)
         if body == "":
-            body = "<p>No new updates this week.</p><p>Why not spend the time you would have been reading, publishing your own blog post instead?</p>"
+            body = "<p>No new updates this week.</p><p>Why not spend some time publishing your own blog post instead?</p>"
 
         for subscriber in subscribers:
             opt_out = f"https://{settings.DOMAIN}/unsubscribe-email/{subscriber.token}/{subscriber.id}"

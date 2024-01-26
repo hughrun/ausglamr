@@ -11,7 +11,7 @@ services:
   web:
     build: .
     env_file: .env
-    command: python manage.py runserver 0.0.0.0:8000
+    command: python manage.py runserver 0.0.0.0:8000 # only use in dev
     # command: gunicorn --env DJANGO_SETTINGS_MODULE=ausglamr.settings ausglamr.wsgi --workers=10 --threads=4 -b 0.0.0.0:8000
     volumes:
       - .:/app

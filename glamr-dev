@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Thanks Mouse Reeve for letting me steal your idea.
+# Thanks Mouse Reeve for letting me steal their idea.
 
 # exit on errors
 set -e
@@ -31,9 +31,9 @@ case "$CMD" in
         runweb python manage.py announce
         ;;
     backup)
-        /snap/bin/docker exec -u root ausglamr_db_1 pg_dump -v -Fc -U ausglamr -d "ausglamr" -f /tmp/ausglamr_backup.dump
-        /snap/bin/docker cp ausglamr_db_1:/tmp/ausglamr_backup.dump /home/hugh/backups/
-        mv /home/hugh/backups/ausglamr_backup.dump /home/hugh/backups/ausglamr_backup_$(date +'%a').dump
+        ${DOCKER_PATH} exec -u root ausglamr_db_1 pg_dump -v -Fc -U ausglamr -d "ausglamr" -f /tmp/ausglamr_backup.dump
+        ${DOCKER_PATH} cp ausglamr_db_1:/tmp/ausglamr_backup.dump ${BACKUPS_DIR}/
+        mv ${BACKUPS_DIR}/ausglamr_backup.dump ${BACKUPS_DIR}/ausglamr_backup_$(date +'%a').dump
         ;;
     black)
         docker compose run --rm web black ausglamr blogs
