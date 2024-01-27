@@ -165,9 +165,9 @@ class Command(BaseCommand):
                                 if newish:
                                     instance.announce()
 
-                            blog.set_success(
-                                updateddate=date_to_tz_aware(article.updated_parsed)
-                            )
+                    blog.set_success(
+                        updateddate=date_to_tz_aware(article.updated_parsed)
+                    )
 
                 except Exception as e:
                     blog.set_failing()
@@ -229,9 +229,9 @@ class Command(BaseCommand):
                             if newish:
                                 instance.announce()
 
-                        newsletter.set_success(
-                            updateddate=date_to_tz_aware(edition.updated_parsed)
-                        )
+                    newsletter.set_success(
+                        updateddate=date_to_tz_aware(edition.updated_parsed)
+                    )
 
                 except Exception as e:
                     newsletter.set_failing()
