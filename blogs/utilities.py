@@ -127,7 +127,7 @@ def get_webfinger_subscribe_uri(username):
             template = link["template"]
 
     if user_id and template:
-        encoded_user = iri_to_uri("blogs@ausglam.space")
+        encoded_user = iri_to_uri("ausglamr@ausglam.space")
         uri = template.replace("{uri}", encoded_user)
         return uri
 

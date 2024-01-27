@@ -129,6 +129,11 @@ class Command(BaseCommand):
                                         and len(article.summary)
                                     )
                                     else html.strip_tags(article.content[0].value)[:200]
+                                    if (
+                                        hasattr(article, "content")
+                                        and len(article.content)
+                                    )
+                                    else None
                                 )
                                 description += "..."
 
@@ -197,8 +202,12 @@ class Command(BaseCommand):
                                     hasattr(edition, "description")
                                     and len(edition.summary)
                                 )
-                                else html.strip_tags(edition.content[0].value)[:200]
-                                + "..."
+                                else html.strip_tags(edition.content[0].value)[:200] + "..."
+                                if (
+                                    hasattr(article, "content")
+                                    and len(article.content)
+                                )
+                                else None
                             )
                             description += "..."
 
