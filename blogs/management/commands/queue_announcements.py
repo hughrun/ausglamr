@@ -33,7 +33,7 @@ class Command(BaseCommand):
             if (
                 conf.announcements < 1
                 or (delta < timedelta(days=7))
-                or (delta < timedelta(months=3) and conf.announcements < 2)
+                or (delta < timedelta(days=90) and conf.announcements < 2)
             ):
                 conf.announce()
 

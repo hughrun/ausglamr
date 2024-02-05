@@ -122,7 +122,7 @@ class Article(BlogData):
                 label = warning.is_in(text)
                 if label:
                     summmary.append(label)
-            for tag in self.tags:  # pylint: disable=E1133
+            for tag in self.tags.all():  # pylint: disable=E1133
                 label = warning.is_in(tag.name)
                 if label:
                     summmary.append(label)

@@ -209,7 +209,8 @@ class Command(BaseCommand):
                                 )
                                 else None
                             )
-                            description += "..."
+                            if description:
+                                description += "..."
 
                             instance = models.Edition.objects.create(
                                 title=edition.title,
