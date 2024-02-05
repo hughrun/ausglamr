@@ -135,7 +135,8 @@ class Command(BaseCommand):
                                     )
                                     else None
                                 )
-                                description += "..."
+                                if description:
+                                    description += "..."
 
                                 instance = models.Article.objects.create(
                                     title=article.title,
