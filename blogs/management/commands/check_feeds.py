@@ -14,6 +14,8 @@ from django.utils import timezone as django_timezone
 
 from blogs import models
 
+from django.forms.models import model_to_dict
+
 agent = "AusGLAMR/1.0 +https://ausglamr.newcardigan.org"
 
 
@@ -165,10 +167,9 @@ class Command(BaseCommand):
                                 newish = instance.pubdate > cutoff
                                 if newish:
                                     instance.announce()
-
-                    blog.set_success(
-                        updateddate=date_to_tz_aware(article.updated_parsed)
-                    )
+                                    blog.set_success(
+                                        updateddate=date_to_tz_aware(article.updated_parsed)
+                                    )
 
                 except Exception as e:
                     blog.set_failing()
