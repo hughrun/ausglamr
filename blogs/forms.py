@@ -1,6 +1,7 @@
 """forms for use in views"""
 
 from django import forms
+from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
@@ -137,6 +138,17 @@ class ContactForm(forms.Form):
     from_email = forms.EmailField(label="Email", max_length=200)
     subject = forms.CharField(label="Subject", max_length=200)
     message = forms.CharField(widget=forms.Textarea)
+    bot_check = forms.CharField(
+        label="What is usually stored in a library?",
+        max_length=10,
+        help_text="Checking that you are human"
+        )
+
+    def clean_bot_check(self):
+        """validate the bot check"""
+        data = self.cleaned_data["bot_check"]
+        if data != "books":
+            raise ValidationError("Try again. Think of something with pages.")
 
 
 class SubscribeViaMastodon(forms.Form):
