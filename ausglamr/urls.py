@@ -1,6 +1,7 @@
 """
 URL configuration for ausglamr project.
 """
+
 from django.contrib import admin
 from django.urls import path, re_path
 from django.views.generic import TemplateView
@@ -65,6 +66,8 @@ urlpatterns = [
         views.UnsubscribeEmail.as_view(),
         name="unsubscribe-email",
     ),
-    path('robots.txt', TemplateView.as_view(template_name='robots.txt',
-                                      content_type='text/plain')),
+    path(
+        "robots.txt",
+        TemplateView.as_view(template_name="robots.txt", content_type="text/plain"),
+    ),
 ]

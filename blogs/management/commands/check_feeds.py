@@ -117,7 +117,7 @@ class Command(BaseCommand):
                             if not opt_out:
                                 author_name = getattr(
                                     article, "author", None
-                                ) or getattr(blog, "author", None)
+                                ) or getattr(blog, "author", "")
 
                                 description = (
                                     html.strip_tags(article.summary)
@@ -125,20 +125,26 @@ class Command(BaseCommand):
                                         hasattr(article, "summary")
                                         and len(article.summary) > 0
                                     )
-                                    else html.strip_tags(article.description)
-                                    if (
-                                        hasattr(article, "description")
-                                        and len(article.summary)
+                                    else (
+                                        html.strip_tags(article.description)
+                                        if (
+                                            hasattr(article, "description")
+                                            and len(article.summary)
+                                        )
+                                        else (
+                                            html.strip_tags(article.content[0].value)
+                                            if (
+                                                hasattr(article, "content")
+                                                and len(article.content)
+                                            )
+                                            else None
+                                        )
                                     )
-                                    else html.strip_tags(article.content[0].value)[:200]
-                                    if (
-                                        hasattr(article, "content")
-                                        and len(article.content)
-                                    )
-                                    else ""
                                 )
                                 if description:
-                                    description += "..."
+                                    description[:200] += "..."
+                                else:
+                                    description = ""
 
                                 instance = models.Article.objects.create(
                                     title=article.title,
@@ -168,7 +174,9 @@ class Command(BaseCommand):
                                 if newish:
                                     instance.announce()
                                     blog.set_success(
-                                        updateddate=date_to_tz_aware(article.updated_parsed)
+                                        updateddate=date_to_tz_aware(
+                                            article.updated_parsed
+                                        )
                                     )
 
                 except Exception as e:
@@ -191,7 +199,7 @@ class Command(BaseCommand):
                             | Q(guid=getattr(edition, "id", edition.link))
                         ).exists():
                             author_name = getattr(edition, "author", None) or getattr(
-                                edition, "author", None
+                                edition, "author", ""
                             )
 
                             description = (
@@ -199,20 +207,26 @@ class Command(BaseCommand):
                                 if (
                                     hasattr(edition, "summary") and len(edition.summary)
                                 )
-                                else html.strip_tags(edition.description)
-                                if (
-                                    hasattr(edition, "description")
-                                    and len(edition.description)
+                                else (
+                                    html.strip_tags(edition.description)
+                                    if (
+                                        hasattr(edition, "description")
+                                        and len(edition.description)
+                                    )
+                                    else (
+                                        html.strip_tags(edition.content[0].value)
+                                        if (
+                                            hasattr(article, "content")
+                                            and len(article.content)
+                                        )
+                                        else None
+                                    )
                                 )
-                                else html.strip_tags(edition.content[0].value)[:200] + "..."
-                                if (
-                                    hasattr(article, "content")
-                                    and len(article.content)
-                                )
-                                else ""
                             )
                             if description:
-                                description += "..."
+                                description[:200] += "..."
+                            else:
+                                description = ""
 
                             instance = models.Edition.objects.create(
                                 title=edition.title,

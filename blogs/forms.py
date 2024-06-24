@@ -141,8 +141,8 @@ class ContactForm(forms.Form):
     bot_check = forms.CharField(
         label="What is usually stored in a library?",
         max_length=10,
-        help_text="Checking that you are human"
-        )
+        help_text="Checking that you are human",
+    )
 
     def clean_bot_check(self):
         """validate the bot check"""
