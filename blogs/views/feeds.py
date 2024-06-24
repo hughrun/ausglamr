@@ -94,9 +94,7 @@ class EventFeed(Feed):
         return (
             item.description
             if hasattr(item, "description")
-            else item.details
-            if hasattr(item, "details")
-            else None
+            else item.details if hasattr(item, "details") else None
         )
 
     def item_link(self, item):
@@ -215,9 +213,7 @@ class CombinedFeed(Feed):
         return (
             item.description
             if hasattr(item, "description")
-            else item.details
-            if hasattr(item, "details")
-            else None
+            else item.details if hasattr(item, "details") else None
         )
 
     def item_link(self, item):

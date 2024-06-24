@@ -194,9 +194,9 @@ class RegisterBlog(View):
                 data["blog_info"] = blog_info
 
             else:
-                data[
-                    "error"
-                ] = "Could not auto-discover your feed info, please enter manually"
+                data["error"] = (
+                    "Could not auto-discover your feed info, please enter manually"
+                )
 
             return render(request, "blogs/confirm-register.html", data)
 
