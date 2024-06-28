@@ -142,15 +142,15 @@ class Command(BaseCommand):
                                     )
                                 )
                                 if description:
-                                    description[:200] += "..."
+                                    desc = description[:200] + "..."
                                 else:
-                                    description = ""
+                                    desc = ""
 
                                 instance = models.Article.objects.create(
                                     title=article.title,
                                     author_name=author_name,
                                     url=article.link,
-                                    description=description,
+                                    description=desc,
                                     updateddate=date_to_tz_aware(
                                         article.updated_parsed
                                     ),
@@ -224,15 +224,15 @@ class Command(BaseCommand):
                                 )
                             )
                             if description:
-                                description[:200] += "..."
+                                desc = description[:200] + "..."
                             else:
-                                description = ""
+                                desc = ""
 
                             instance = models.Edition.objects.create(
                                 title=edition.title,
                                 author_name=author_name,
                                 url=edition.link,
-                                description=description,
+                                description=desc,
                                 updateddate=date_to_tz_aware(edition.updated_parsed),
                                 newsletter=newsletter,
                                 pubdate=date_to_tz_aware(edition.published_parsed),
