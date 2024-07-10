@@ -1,6 +1,6 @@
 beautifulsoup4==4.12.2
 gunicorn==22.0.0
-Django==4.2.11
+Django==4.2.14
 environs==9.5.0
 feedparser==6.0.10
 psycopg2==2.9.5
